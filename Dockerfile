@@ -15,8 +15,7 @@ FROM oven/bun:1
 WORKDIR /app
 RUN bun add -g serve
 
-#COPY --from=build /src/dist /src/dist
-COPY --from=build /app/.output /app/.output
+COPY --from=build /app/dist /app/dist
 
 EXPOSE 3000
 #CMD ["serve", "-s", "dist", "-l", "3000"]
