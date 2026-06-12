@@ -11,8 +11,19 @@
         <v-divider />
 
         <v-row class="mt-4">
-          <v-col v-for="item in foodItems" :key="item.title" cols="12">
-            <cart-item-card :item="item" @add-item="addItem" />
+          <v-col
+            v-for="item in foodItems"
+            :key="item.title"
+            cols="12"
+            md="6"
+            sm="12"
+          >
+            <cart-item-card
+              :amount-in-cart="getAmountInCart(item)"
+              :item="item"
+              @add-item="addItem"
+              @remove-item="removeItem"
+            />
           </v-col>
         </v-row>
 
@@ -30,8 +41,8 @@
 
   const foodItems: CartItem[] = [
     {
-      title: 'Bratwurstsemmel',
-      price: 3.5,
+      title: 'Bratwürste',
+      price: 4,
       color: '#FF0000',
     },
     {
@@ -40,7 +51,7 @@
       color: '#ff4d00',
     },
     {
-      title: 'Steaksemmel',
+      title: 'Steak',
       price: 4.5,
       color: '#783b00',
     },
@@ -50,7 +61,7 @@
       color: '#81817b',
     },
     {
-      title: 'Breze mit Käse',
+      title: 'Breze m. Käse',
       price: 3,
       color: '#7b7b00',
     },
@@ -63,8 +74,24 @@
 
   const cart = ref<CartItem[]>([])
 
+  function getAmountInCart (item: CartItem) {
+    let count = 0
+    for (const cartItem of cart.value) {
+      if (item.title === cartItem.title) count++
+    }
+
+    return count
+  }
+
   function addItem (item: CartItem) {
     cart.value.push(item)
+  }
+
+  function removeItem (item: CartItem) {
+    const index = cart.value.indexOf(item)
+    if (index !== -1) {
+      cart.value.splice(index, 1)
+    }
   }
 
   function resetPrice () {

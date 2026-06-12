@@ -10,7 +10,15 @@
       :title="item.title"
       variant="tonal"
       @click="addItem(item)"
-    />
+    >
+      <template v-if="amountInCart || amountInCart > 0" #prepend>
+        <v-icon-btn icon="mdi-minus-circle-outline" @click.stop="removeItemFromCart" />
+      </template>
+
+      <template v-if="amountInCart || amountInCart > 0" #append>
+        <v-badge color="white" :content="amountInCart" dot-size="16" inline />
+      </template>
+    </v-card>
   </div>
 </template>
 
@@ -20,12 +28,17 @@
 
   defineProps<{
     item: CartItem
+    amountInCart: number
   }>()
 
-  const emit = defineEmits(['add-item'])
+  const emit = defineEmits(['add-item', 'remove-item'])
 
   function addItem (item: CartItem) {
     emit('add-item', item)
+  }
+
+  function removeItemFromCart (item: CartItem) {
+    emit('remove-item', item)
   }
 </script>
 <style>
