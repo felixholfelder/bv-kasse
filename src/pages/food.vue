@@ -15,51 +15,51 @@
 </template>
 
 <script setup lang="ts">
-import type { CartItem } from '@/types/cartItem.ts'
-import { ref } from 'vue'
-import TotalPrice from '@/components/total-price.vue'
-import CartItemCard from '@/components/cart-item.vue'
+  import type { CartItem } from '@/types/cartItem.ts'
+  import { ref } from 'vue'
+  import CartItemCard from '@/components/cart-item.vue'
+  import TotalPrice from '@/components/total-price.vue'
 
-const foodItems: CartItem[] = [
-  {
-    title: 'Bratwurstsemmel',
-    price: 3.5,
-    color: '#FF0000',
-  },
-  {
-    title: 'Käswürste',
-    price: 4.5,
-    color: '#ff4d00',
-  },
-  {
-    title: 'Steaksemmel',
-    price: 4.5,
-    color: '#783b00',
-  },
-  {
-    title: 'Knacker',
-    price: 4.5,
-    color: '#81817b',
-  },
-  {
-    title: 'Breze mit Käse',
-    price: 3,
-    color: '#7b7b00',
-  },
-  {
-    title: 'Breze',
-    price: 2,
-    color: '#371700',
-  },
-]
+  const foodItems: CartItem[] = [
+    {
+      title: 'Bratwurstsemmel',
+      price: 3.5,
+      color: '#FF0000',
+    },
+    {
+      title: 'Käswürste',
+      price: 4.5,
+      color: '#ff4d00',
+    },
+    {
+      title: 'Steaksemmel',
+      price: 4.5,
+      color: '#783b00',
+    },
+    {
+      title: 'Knacker',
+      price: 4.5,
+      color: '#81817b',
+    },
+    {
+      title: 'Breze mit Käse',
+      price: 3,
+      color: '#7b7b00',
+    },
+    {
+      title: 'Breze',
+      price: 2,
+      color: '#371700',
+    },
+  ]
 
-const cart = ref<CartItem[]>([])
+  const cart = ref<CartItem[]>([])
 
-function addItem(item: CartItem) {
-  cart.value.push(item)
-}
+  function addItem (item: CartItem) {
+    cart.value.push(item)
+  }
 
-function resetPrice() {
-  cart.value = []
-}
+  function resetPrice () {
+    cart.value = []
+  }
 </script>

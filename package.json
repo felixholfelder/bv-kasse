@@ -12,7 +12,10 @@
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint .",
     "lint:eslint": "eslint . --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "run-s format:*",
+    "format:prettier": "prettier --write --experimental-cli src/",
+    "format:oxlint": "oxlint . --fix",
+    "format:eslint": "eslint . --fix --cache"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
