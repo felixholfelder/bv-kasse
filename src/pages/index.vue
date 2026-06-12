@@ -2,7 +2,7 @@
   <v-container class="fill-height d-flex flex-column justify-center" max-width="1100">
     <div>
       <v-row>
-        <v-col cols="4">
+        <v-col cols="12" md="4" sm="12">
           <v-card
             class="py-4"
             color="surface-variant"
@@ -16,7 +16,7 @@
           />
         </v-col>
 
-        <v-col cols="4">
+        <v-col cols="12" md="4" sm="12">
           <v-card
             class="py-4"
             color="surface-variant"
@@ -30,7 +30,7 @@
           />
         </v-col>
 
-        <v-col cols="4">
+        <v-col cols="12" md="4" sm="12">
           <v-card
             class="py-4"
             color="surface-variant"
@@ -48,4 +48,5 @@
   </v-container>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
