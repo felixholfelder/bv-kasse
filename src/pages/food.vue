@@ -1,17 +1,25 @@
 <template>
-  <v-container class="fill-height d-flex flex-column justify-center" max-width="1100">
-    <div>
-      <v-row>
-        <v-col cols="12">
-          <total-price :cart="cart" @reset-price="resetPrice" />
-        </v-col>
+  <div>
+    <v-container class="fill-height d-flex flex-column" max-width="1100">
+      <div>
+        <v-row class="position-sticky top-0 mb-4" style="z-index: 10">
+          <v-col cols="12">
+            <total-price :cart="cart" @reset-price="resetPrice" />
+          </v-col>
+        </v-row>
 
-        <v-col v-for="item in foodItems" :key="item.title" cols="6">
-          <cart-item-card :item="item" @add-item="addItem" />
-        </v-col>
-      </v-row>
-    </div>
-  </v-container>
+        <v-divider />
+
+        <v-row class="mt-4">
+          <v-col v-for="item in foodItems" :key="item.title" cols="12">
+            <cart-item-card :item="item" @add-item="addItem" />
+          </v-col>
+        </v-row>
+
+        <v-spacer />
+      </div>
+    </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,12 +1,6 @@
 <template>
   <div>
-    <v-card
-      class="py-4"
-      color="surface-variant"
-      rounded="lg"
-      variant="tonal"
-      @click="resetPrice"
-    >
+    <v-card class="py-4" rounded="lg" @click="resetPrice">
       <template #prepend>
         <v-avatar class="ml-2 mr-4" icon="mdi-currency-eur" size="60" variant="tonal" />
       </template>
