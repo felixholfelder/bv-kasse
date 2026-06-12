@@ -4,7 +4,7 @@
       class="py-4"
       rel="noopener noreferrer"
       rounded="lg"
-      :style="{ 'background-color': item.color }"
+      :style="{ 'background-color': item.color, 'color': 'white' }"
       :subtitle="formatPrice(item.price)"
       target="_blank"
       :title="item.title"
