@@ -43,11 +43,9 @@
             @click="$router.push('schnaps-bar')"
           />
         </v-col>
-
       </v-row>
     </div>
   </v-container>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>

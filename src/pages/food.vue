@@ -3,37 +3,11 @@
     <div>
       <v-row>
         <v-col cols="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            rounded="lg"
-            variant="tonal"
-            @click="resetPrice"
-          >
-            <template #prepend>
-              <v-avatar class="ml-2 mr-4" icon="mdi-currency-eur" size="60" variant="tonal" />
-            </template>
-
-            <template #title>
-              <div class="my-title my-uppercase text-headline-medium font-weight-bold">
-                Gesamtpreis: €
-              </div>
-            </template>
-          </v-card>
+          <total-price :cart="cart" @reset-price="resetPrice" />
         </v-col>
 
-        <v-col v-for="item in items" :key="item.title" cols="6">
-          <v-card
-            class="py-4"
-            :color="item.color"
-            rel="noopener noreferrer"
-            rounded="lg"
-            :subtitle="`${item.price} €`"
-            target="_blank"
-            :title="item.title"
-            variant="tonal"
-            @click="addItem(item)"
-          />
+        <v-col v-for="item in foodItems" :key="item.title" cols="6">
+          <cart-item-card :item="item" @add-item="addItem" />
         </v-col>
       </v-row>
     </div>
@@ -41,39 +15,51 @@
 </template>
 
 <script setup lang="ts">
-  import type { Item } from '@/types/item.ts'
-  import { ref } from 'vue'
+import type { CartItem } from '@/types/cartItem.ts'
+import { ref } from 'vue'
+import TotalPrice from '@/components/total-price.vue'
+import CartItemCard from '@/components/cart-item.vue'
 
-  const items: Item[] = [
-    {
-      title: 'Bratwurstsemmel',
-      price: 3.5,
-      color: '#FF0000',
-    },
-    {
-      title: 'Steaksemmel',
-      price: 4.5,
-      color: '#FF0000',
-    },
-    {
-      title: 'Breze mit Käse',
-      price: 3,
-      color: '#FF0000',
-    },
-    {
-      title: 'Lecker Bierchen',
-      price: 3.5,
-      color: '#FF0000',
-    },
-  ]
+const foodItems: CartItem[] = [
+  {
+    title: 'Bratwurstsemmel',
+    price: 3.5,
+    color: '#FF0000',
+  },
+  {
+    title: 'Käswürste',
+    price: 4.5,
+    color: '#ff4d00',
+  },
+  {
+    title: 'Steaksemmel',
+    price: 4.5,
+    color: '#783b00',
+  },
+  {
+    title: 'Knacker',
+    price: 4.5,
+    color: '#81817b',
+  },
+  {
+    title: 'Breze mit Käse',
+    price: 3,
+    color: '#7b7b00',
+  },
+  {
+    title: 'Breze',
+    price: 2,
+    color: '#371700',
+  },
+]
 
-  const cart = ref<Item[]>([])
+const cart = ref<CartItem[]>([])
 
-  function addItem (item: Item) {
-    cart.value.push(item)
-  }
+function addItem(item: CartItem) {
+  cart.value.push(item)
+}
 
-  function resetPrice () {
-    cart.value = []
-  }
+function resetPrice() {
+  cart.value = []
+}
 </script>
