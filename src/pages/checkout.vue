@@ -30,7 +30,8 @@
 
   onMounted(async () => {
     await nextTick()
-    givenAmountInput.value?.select()
+    const input = givenAmountInput.value?.$el.querySelector('input')
+    setTimeout(() => input?.select(), 50)
   })
 </script>
 
@@ -60,7 +61,9 @@
           ref="givenAmountInput"
           v-model="givenAmount"
           autofocus
+          decimal-separator=","
           :min="0"
+          :precision="2"
           variant="outlined"
         />
       </v-card>
