@@ -5,7 +5,7 @@
         <v-row>
           <v-app-bar :title="appBarTitle">
             <template #prepend>
-              <v-icon-btn icon="mdi-arrow-left" @click="$router.push('/')" />
+              <v-icon-btn icon="mdi-arrow-left" @click="$router.back()" />
             </template>
 
             <template #append>

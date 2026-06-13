@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
   import type { CartItem } from '@/types/cartItem.ts'
-  import { computed } from 'vue'
   import { useRoute } from 'vue-router'
   import RegisterView from '@/components/register-view.vue'
 

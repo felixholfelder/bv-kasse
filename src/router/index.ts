@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Checkout from '@/pages/checkout.vue'
 import Drinks from '@/pages/drinks.vue'
 import Food from '@/pages/food.vue'
 import Index from '@/pages/index.vue'
@@ -22,6 +23,10 @@ const router = createRouter({
     {
       path: '/schnaps-bar',
       component: SchnappsBar,
+    },
+    {
+      path: '/checkout',
+      component: Checkout,
     },
   ],
 })
