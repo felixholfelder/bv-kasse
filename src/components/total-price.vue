@@ -6,8 +6,8 @@
       </template>
 
       <template #title>
-        <div class="my-title my-uppercase text-headline-medium font-weight-bold">
-          Gesamt: {{ formatPrice(totalPrice) }}
+        <div class="my-title my-uppercase text-headline-medium font-weight-bold text-right">
+          {{ formatPrice(totalPrice) }}
         </div>
       </template>
     </v-card>
