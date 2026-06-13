@@ -1,16 +1,14 @@
 <template>
   <div>
-    <v-card class="py-4" rounded="lg" @click="resetPrice">
-      <template #prepend>
-        <v-avatar class="ml-2 mr-4" icon="mdi-currency-eur" size="60" variant="tonal" />
-      </template>
+    <v-bottom-navigation class="text-center d-flex align-center" height="80" @click="resetPrice">
+      <v-avatar class="ml-4 mr-4" icon="mdi-currency-eur" size="60" variant="tonal" />
 
-      <template #title>
-        <div class="my-title my-uppercase text-headline-medium font-weight-bold text-right">
-          {{ formatPrice(totalPrice) }}
-        </div>
-      </template>
-    </v-card>
+      <v-spacer />
+
+      <div class="text-headline-medium font-weight-bold align-self-center mr-6">
+        {{ formatPrice(totalPrice) }}
+      </div>
+    </v-bottom-navigation>
   </div>
 </template>
 

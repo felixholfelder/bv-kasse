@@ -2,15 +2,21 @@
   <div>
     <v-container class="fill-height d-flex flex-column" max-width="1100">
       <div>
-        <v-row class="position-sticky top-0 mb-4" style="z-index: 10">
-          <v-col cols="12">
-            <total-price :cart="cart" @reset-price="resetPrice" />
-          </v-col>
+        <v-row>
+          <v-app-bar title="Essen">
+            <template #prepend>
+              <v-icon-btn icon="mdi-arrow-left" @click="$router.push('/')" />
+            </template>
+
+            <template #append>
+              <v-icon-btn icon="mdi-trash-can-outline" @click="resetPrice" />
+            </template>
+          </v-app-bar>
         </v-row>
 
         <v-divider />
 
-        <v-row class="mt-4">
+        <v-row class="mt-16" style="margin-bottom: 80px">
           <v-col
             v-for="item in foodItems.filter((value) => value.enabled)"
             :key="item.title"
@@ -27,7 +33,7 @@
           </v-col>
         </v-row>
 
-        <v-spacer />
+        <total-price :cart="cart" @reset-price="resetPrice" />
       </div>
     </v-container>
   </div>
