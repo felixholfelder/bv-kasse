@@ -47,14 +47,12 @@
 
     <v-container class="fill-height d-flex flex-column mt-16" max-width="1100">
       <v-card class="py-4 pa-3 mb-4 text-title-large">
-        <v-row>
+        <v-row class="mb-4">
           <div>Gesamtpreis:</div>
           <v-spacer />
           <div>{{ formatPrice(price) }}</div>
         </v-row>
-      </v-card>
 
-      <v-card class="py-4 pa-3 mb-4 text-title-large">
         <div class="mb-4">Gegeben:</div>
 
         <v-number-input
@@ -70,7 +68,7 @@
 
       <v-divider class="mb-4" />
 
-      <v-card class="py-4 pa-3 text-title-large">
+      <v-card class="py-4 pa-3 text-headline-large">
         <v-row>
           <div>Rückgeld:</div>
           <v-spacer />
@@ -81,4 +79,8 @@
   </div>
 </template>
 
-<style scoped></style>
+<style>
+.v-field__input {
+  font-size: 24px;
+}
+</style>
