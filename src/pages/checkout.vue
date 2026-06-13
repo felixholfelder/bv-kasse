@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed, nextTick, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
+  import { VNumberInput } from 'vuetify/components'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   const route = useRoute()
@@ -8,7 +9,7 @@
   const defaultChangeMatrix = [1, 2, 5, 10, 20, 50, 100]
 
   const price = computed(() => {
-    return Number.parseFloat(params.price)
+    return Number.parseFloat(params.price as string)
   })
 
   function getDefaultChange () {
@@ -25,7 +26,7 @@
     return givenAmount.value - price.value
   })
 
-  const givenAmountInput = ref(null)
+  const givenAmountInput = ref<InstanceType<typeof VNumberInput> | null>(null)
 
   onMounted(async () => {
     await nextTick()
