@@ -3,7 +3,7 @@
     <v-container class="fill-height d-flex flex-column" max-width="1100">
       <div>
         <v-row>
-          <v-app-bar title="Essen">
+          <v-app-bar :title="appBarTitle">
             <template #prepend>
               <v-icon-btn icon="mdi-arrow-left" @click="$router.push('/')" />
             </template>
@@ -41,9 +41,12 @@
 
 <script setup lang="ts">
   import type { CartItem } from '@/types/cartItem.ts'
-  import { ref } from 'vue'
+  import { computed, ref } from 'vue'
+  import { useRoute } from 'vue-router'
   import CartItemCard from '@/components/cart-item.vue'
   import TotalPrice from '@/components/total-price.vue'
+
+  const route = useRoute()
 
   const foodItems: CartItem[] = [
     {
@@ -91,6 +94,11 @@
   ]
 
   const cart = ref<CartItem[]>([])
+
+  const appBarTitle = computed(() => {
+    const name = route.path.replace('/', '')
+    return name.charAt(0).toUpperCase() + name.slice(1)
+  })
 
   function getAmountInCart (item: CartItem) {
     let count = 0
