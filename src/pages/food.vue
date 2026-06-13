@@ -12,7 +12,7 @@
 
         <v-row class="mt-4">
           <v-col
-            v-for="item in foodItems.filter(value => value.enabled)"
+            v-for="item in foodItems.filter((value) => value.enabled)"
             :key="item.title"
             cols="12"
             md="6"
@@ -100,8 +100,7 @@
   }
 
   function removeItem (item: CartItem) {
-    const index = cart.value.indexOf(item)
-    console.log(index)
+    const index = cart.value.findIndex(cartItem => cartItem.title === item.title)
     if (index !== -1) {
       cart.value.splice(index, 1)
     }

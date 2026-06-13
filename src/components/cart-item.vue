@@ -1,22 +1,30 @@
 <template>
   <div>
     <v-card
-      class="py-4"
-      rel="noopener noreferrer"
+      class="py-3"
+      :color="item.color"
       rounded="lg"
-      :style="{ 'background-color': item.color, color: 'white' }"
       :subtitle="formatPrice(item.price)"
-      target="_blank"
       :title="item.title"
-      variant="tonal"
       @click="addItem(item)"
     >
       <template v-if="amountInCart || amountInCart > 0" #prepend>
-        <v-icon-btn icon="mdi-minus-circle-outline" @click.stop="removeItemFromCart" />
+        <v-icon-btn
+          class="bg-white"
+          color="black"
+          icon="mdi-minus-circle-outline"
+          @click.stop="removeItemFromCart(item)"
+        />
       </template>
 
       <template v-if="amountInCart || amountInCart > 0" #append>
-        <v-badge color="white" :content="amountInCart" dot-size="16" inline />
+        <v-badge
+          color="white"
+          :content="amountInCart"
+          height="36"
+          inline
+          width="36"
+        />
       </template>
     </v-card>
   </div>
@@ -44,5 +52,9 @@
 <style>
 .v-card-subtitle {
   font-size: 16px;
+}
+
+.v-badge__badge {
+  font-size: 20px;
 }
 </style>
