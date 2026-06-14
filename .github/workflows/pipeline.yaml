@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node
         uses: actions/setup-node@v4
@@ -43,7 +43,7 @@ jobs:
     needs: qualitygate
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -73,7 +73,7 @@ jobs:
     if: github.ref_type == 'tag' || github.ref_name == 'main'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build Docker image
         run: docker build --build-arg revision=${{ env.VERSION }} . -t ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
