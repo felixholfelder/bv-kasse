@@ -14,14 +14,20 @@
   const items: CartItem[] = [
     {
       title: 'Bier/Radler',
-      price: 4,
+      price: 3.5,
       color: '#ff0000',
       enabled: true,
     },
     {
-      title: 'Spezi/Wasser/Limo',
-      price: 3.5,
+      title: 'Spezi/Wasser/Limo/Apfelschorle',
+      price: 2.5,
       color: '#371700',
+      enabled: true,
+    },
+    {
+      title: 'Weinschorle/Lillet',
+      price: 4.5,
+      color: '#8e0aa6',
       enabled: true,
     },
   ]
