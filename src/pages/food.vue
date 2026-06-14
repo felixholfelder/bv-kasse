@@ -14,31 +14,31 @@
   const items: CartItem[] = [
     {
       title: 'Bratwürste',
-      price: 4,
+      price: 3.5,
       color: '#FF0000',
       enabled: true,
     },
     {
       title: 'Käswürste',
-      price: 4.5,
+      price: 3.5,
       color: '#ff4d00',
       enabled: true,
     },
     {
       title: 'Steak',
-      price: 4.5,
+      price: 4,
       color: '#9f4f00',
       enabled: true,
     },
     {
       title: 'Pommes',
-      price: 3,
+      price: 3.5,
       color: '#dfc000',
       enabled: true,
     },
     {
       title: 'Burger',
-      price: 3,
+      price: 6.5,
       color: '#00FF00',
       enabled: true,
     },
