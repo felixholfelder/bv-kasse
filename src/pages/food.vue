@@ -26,7 +26,7 @@
     },
     {
       title: 'Steak',
-      price: 4,
+      price: 4.5,
       color: '#9f4f00',
       enabled: true,
     },
