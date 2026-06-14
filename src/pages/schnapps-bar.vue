@@ -24,5 +24,11 @@
       color: '#0000FF',
       enabled: true,
     },
+    {
+      title: 'Klopfer',
+      price: 1.5,
+      color: '#ebeb0c',
+      enabled: true,
+    },
   ]
 </script>
