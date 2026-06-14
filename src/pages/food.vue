@@ -50,7 +50,7 @@
     },
     {
       title: 'Breze m. Käse',
-      price: 3,
+      price: 4,
       color: '#7b7b00',
       enabled: true,
     },
