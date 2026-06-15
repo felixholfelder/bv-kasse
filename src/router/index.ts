@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { auth } from '@/firebase.ts'
+import AdminEvents from '@/pages/admin/events.vue'
 import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
+import AdminProducts from '@/pages/admin/products.vue'
+import AdminRegisters from '@/pages/admin/registers.vue'
 import Checkout from '@/pages/checkout.vue'
 import Drinks from '@/pages/drinks.vue'
 import Food from '@/pages/food.vue'
@@ -39,6 +42,24 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: Admin,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/kassen',
+    name: 'adminRegisters',
+    component: AdminRegisters,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/produkte',
+    name: 'adminProducts',
+    component: AdminProducts,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/events',
+    name: 'adminEvents',
+    component: AdminEvents,
     meta: { requiresAuth: true },
   },
 ]
