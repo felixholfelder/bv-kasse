@@ -13,13 +13,13 @@
 </template>
 
 <script setup lang="ts">
-  import type { CartItem } from '@/types/cartItem.ts'
+  import type { Product } from '@/types/product.ts'
   import { computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   const props = defineProps<{
-    cart: CartItem[]
+    cart: Product[]
   }>()
 
   const router = useRouter()

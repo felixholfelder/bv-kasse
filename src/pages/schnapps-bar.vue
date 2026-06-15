@@ -5,21 +5,21 @@
 </template>
 
 <script setup lang="ts">
-  import type { CartItem } from '@/types/cartItem.ts'
+  import type { Product } from '@/types/product.ts'
   import { useRoute } from 'vue-router'
   import RegisterView from '@/components/register-view.vue'
 
   const route = useRoute()
 
-  const items: CartItem[] = [
+  const items: Product[] = [
     {
-      title: 'Gespritzer',
+      name: 'Gespritzer',
       price: 3.5,
       color: '#FF0000',
       enabled: true,
     },
     {
-      title: 'Kurzer',
+      name: 'Kurzer',
       price: 2,
       color: '#0000FF',
       enabled: true,

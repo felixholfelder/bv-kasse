@@ -25,12 +25,12 @@
     ])
   })
 
-  const isRegisterDialogOpen = ref(false)
+  const isEditDialogOpen = ref(false)
   const selectedItem = ref<Register | null>(null)
 
-  function openRegisterDialog (item: Register | null = null) {
+  function openEditDialog (item: Register | null = null) {
     selectedItem.value = item
-    isRegisterDialogOpen.value = true
+    isEditDialogOpen.value = true
   }
 
   function saveItem (item: Register) {
@@ -45,7 +45,7 @@
 
 <template>
   <div>
-    <register-dialog v-model="isRegisterDialogOpen" :item="selectedItem" @submit="saveItem" />
+    <register-dialog v-model="isEditDialogOpen" :item="selectedItem" @submit="saveItem" />
 
     <v-app-bar title="Kassen">
       <template #prepend>
@@ -53,7 +53,7 @@
       </template>
 
       <template #append>
-        <v-btn icon="mdi-plus" @click="openRegisterDialog()" />
+        <v-btn icon="mdi-plus" @click="openEditDialog()" />
       </template>
     </v-app-bar>
 
@@ -65,7 +65,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="item in items.value" :key="item.id" @click="openRegisterDialog(item)">
+        <tr v-for="item in items.value" :key="item.id" @click="openEditDialog(item)">
           <td>{{ item.name }}</td>
         </tr>
       </tbody>
