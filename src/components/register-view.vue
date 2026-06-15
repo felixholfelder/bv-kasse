@@ -5,11 +5,11 @@
         <v-row>
           <v-app-bar :title="appBarTitle">
             <template #prepend>
-              <v-icon-btn icon="mdi-arrow-left" @click="$router.back()" />
+              <v-btn icon="mdi-arrow-left" @click="$router.back()" />
             </template>
 
             <template #append>
-              <v-icon-btn icon="mdi-trash-can-outline" @click="resetPrice" />
+              <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />
             </template>
           </v-app-bar>
         </v-row>
