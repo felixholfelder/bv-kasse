@@ -1,5 +1,14 @@
 import type { ProductCounterItem } from '@/types/counter_product.ts'
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { db } from '@/firebase'
 
 export function useFirestore () {
@@ -45,7 +54,7 @@ export function useFirestore () {
   }
 
   async function getEvents () {
-    const q = query(collection(db, event))
+    const q = query(collection(db, event), orderBy('date', 'desc'))
 
     const snapshot = await getDocs(q)
 
@@ -55,9 +64,39 @@ export function useFirestore () {
     }))
   }
 
+  async function getEvent (id: string) {
+    const q = query(collection(db, event), where('id', '==', id))
+
+    const snapshot = await getDocs(q)
+    if (snapshot.docs.length > 1) {
+      throw new Error(`More than one document was found with eventId ${id}.`)
+    }
+
+    return {
+      documentId: snapshot.docs[0].id,
+      ...snapshot.docs[0].data(),
+    }
+  }
+
+  async function disableEvent (eventId: string) {
+    const item = await getEvent(eventId)
+    await updateDoc(doc(db, event, item.documentId), {
+      enabled: false,
+    })
+  }
+
+  async function enableEvent (eventId: string) {
+    const item = await getEvent(eventId)
+    await updateDoc(doc(db, event, item.documentId), {
+      enabled: true,
+    })
+  }
+
   return {
     updateCounterItem,
     getEvents,
+    enableEvent,
+    disableEvent,
     createCounterItem,
   }
 }

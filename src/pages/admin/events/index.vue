@@ -3,12 +3,25 @@
   import { formatTimestamp } from '@/composable/useDates.ts'
   import { useFirestore } from '@/composable/useFirestore.ts'
 
-  const { getEvents } = useFirestore()
+  const { getEvents, enableEvent, disableEvent } = useFirestore()
 
   const events = ref([])
   onMounted(async () => {
     events.value = await getEvents()
   })
+
+  async function onToggleEvent (toggle: boolean, item: any) {
+    // TODO - maybe refactor this when multiple events can happen at a time
+    if (toggle) {
+      for (const e of events.value) {
+        disableEvent(e.id)
+      }
+    }
+
+    await (toggle ? enableEvent(item.id) : disableEvent(item.id))
+
+    events.value = await getEvents()
+  }
 </script>
 
 <template>
@@ -33,7 +46,7 @@
           <td>{{ item.name }}</td>
           <td>{{ formatTimestamp(item.date) }}</td>
 
-          <td>
+          <td @click.stop="onToggleEvent(!item.enabled, item)">
             <v-switch :model-value="item.enabled" />
           </td>
         </tr>
