@@ -1,19 +1,14 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { useShortDate } from '@/composable/useDates.ts'
+  import { onMounted, ref } from 'vue'
+  import { formatTimestamp } from '@/composable/useDates.ts'
+  import { useFirestore } from '@/composable/useFirestore.ts'
 
-  const events = ref([
-    {
-      name: 'Johannisfeuer 2026',
-      date: useShortDate(),
-      activated: true,
-    },
-    {
-      name: 'Waldweihnacht 2025',
-      date: useShortDate(),
-      activated: false,
-    },
-  ])
+  const { getEvents } = useFirestore()
+
+  const events = ref([])
+  onMounted(async () => {
+    events.value = await getEvents()
+  })
 </script>
 
 <template>
@@ -34,12 +29,12 @@
       </thead>
 
       <tbody>
-        <tr v-for="item in events" :key="item.name">
+        <tr v-for="item in events" :key="item.id" @click="$router.push(`/admin/events/${item.id}`)">
           <td>{{ item.name }}</td>
-          <td>{{ item.date }}</td>
+          <td>{{ formatTimestamp(item.date) }}</td>
 
           <td>
-            <v-switch :value="item.activated" />
+            <v-switch :model-value="item.enabled" />
           </td>
         </tr>
       </tbody>

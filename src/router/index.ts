@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { auth } from '@/firebase.ts'
-import AdminEvents from '@/pages/admin/events.vue'
+import AdminEvents from '@/pages/admin/events/index.vue'
 import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
 import AdminProducts from '@/pages/admin/products.vue'
