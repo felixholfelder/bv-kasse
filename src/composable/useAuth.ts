@@ -1,16 +1,11 @@
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from 'firebase/auth'
 import { computed, ref } from 'vue'
 import { auth } from '@/firebase.ts'
 
-const user = ref(null)
+const user = ref<User | null>(null)
 const loading = ref(true)
 
-// Auth-State einmalig global überwachen
-onAuthStateChanged(auth, (firebaseUser) => {
+onAuthStateChanged(auth, firebaseUser => {
   user.value = firebaseUser
   loading.value = false
 })

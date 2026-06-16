@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { auth } from '@/firebase.ts'
 import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
 import Checkout from '@/pages/checkout.vue'
@@ -6,49 +7,62 @@ import Drinks from '@/pages/drinks.vue'
 import Food from '@/pages/food.vue'
 import Index from '@/pages/index.vue'
 import SchnappsBar from '@/pages/schnapps-bar.vue'
-import { useAuthStore } from '@/stores/auth.ts'
+
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: Index,
+  },
+  {
+    path: '/essen',
+    component: Food,
+  },
+  {
+    path: '/ausschank',
+    component: Drinks,
+  },
+  {
+    path: '/schnaps-bar',
+    component: SchnappsBar,
+  },
+  {
+    path: '/checkout',
+    component: Checkout,
+  },
+  {
+    path: '/admin/login',
+    name: 'adminLogin',
+    component: AdminLogin,
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: Admin,
+    meta: { requiresAuth: true },
+  },
+]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      component: Index,
-    },
-    {
-      path: '/essen',
-      component: Food,
-    },
-    {
-      path: '/ausschank',
-      component: Drinks,
-    },
-    {
-      path: '/schnaps-bar',
-      component: SchnappsBar,
-    },
-    {
-      path: '/checkout',
-      component: Checkout,
-    },
-    {
-      path: '/admin/login',
-      component: AdminLogin,
-    },
-    {
-      path: '/admin',
-      component: Admin,
-      meta: { requiresAuth: true },
-    },
-  ],
+  history: createWebHistory(),
+  routes,
 })
 
-router.beforeEach((to, _, next) => {
-  const auth = useAuthStore()
-  if (to.meta.requiresAuth && !auth.isLoggedIn) {
-    next('admin/login')
-  } else {
-    next()
+router.beforeEach(async to => {
+  await new Promise<void>(resolve => {
+    const unsubscribe = auth.onAuthStateChanged(() => {
+      unsubscribe()
+      resolve()
+    })
+  })
+
+  const user = auth.currentUser
+
+  if (to.meta.requiresAuth && !user) {
+    return { name: 'adminLogin' }
+  }
+  if (to.meta.requiresGuest && user) {
+    return { name: 'home' }
   }
 })
 
