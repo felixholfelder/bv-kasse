@@ -18,30 +18,36 @@
       </template>
 
       <template v-if="amountInCart || amountInCart > 0" #append>
-        <v-badge color="white" :content="amountInCart" height="36" inline width="36" />
+        <v-badge
+          color="white"
+          :content="amountInCart"
+          height="36"
+          inline
+          width="36"
+        />
       </template>
     </v-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { CartItem } from '@/types/cartItem.ts'
-import { formatPrice } from '@/composable/usePriceUtils.ts'
+  import type { CartItem } from '@/types/cartItem.ts'
+  import { formatPrice } from '@/composable/usePriceUtils.ts'
 
-defineProps<{
-  item: CartItem
-  amountInCart: number
-}>()
+  defineProps<{
+    item: CartItem
+    amountInCart: number
+  }>()
 
-const emit = defineEmits(['add-item', 'remove-item'])
+  const emit = defineEmits(['add-item', 'remove-item'])
 
-function addItem(item: CartItem) {
-  emit('add-item', item)
-}
+  function addItem (item: CartItem) {
+    emit('add-item', item)
+  }
 
-function removeItemFromCart(item: CartItem) {
-  emit('remove-item', item)
-}
+  function removeItemFromCart (item: CartItem) {
+    emit('remove-item', item)
+  }
 </script>
 <style>
 .v-card-subtitle {
