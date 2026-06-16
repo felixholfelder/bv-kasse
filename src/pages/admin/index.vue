@@ -1,9 +1,9 @@
 <template>
   <v-container class="fill-height d-flex flex-column justify-center" max-width="1100">
     <div>
-      <v-app-bar title="Kassensystem BV Altenstadt">
-        <template #append>
-          <v-btn color="surface-variant" icon="mdi-cog" @click="$router.push('/admin/login')" />
+      <v-app-bar title="Admin-Bereich">
+        <template #prepend>
+          <v-btn icon="mdi-arrow-left" @click="$router.push('/')" />
         </template>
       </v-app-bar>
 
@@ -12,13 +12,25 @@
           <v-card
             class="py-4"
             color="surface-variant"
-            prepend-icon="mdi-silverware-fork-knife"
-            rel="noopener noreferrer"
+            prepend-icon="mdi-party-popper"
             rounded="lg"
-            target="_blank"
-            title="Essen"
+            title="Events"
             variant="tonal"
-            @click="$router.push('/essen')"
+            @click="$router.push('/admin/events')"
+          />
+        </v-col>
+
+        <v-divider />
+
+        <v-col cols="12" md="4" sm="12">
+          <v-card
+            class="py-4"
+            color="surface-variant"
+            prepend-icon="mdi-cash-register"
+            rounded="lg"
+            title="Kassen"
+            variant="tonal"
+            @click="$router.push('/admin/kassen')"
           />
         </v-col>
 
@@ -26,27 +38,11 @@
           <v-card
             class="py-4"
             color="surface-variant"
-            prepend-icon="mdi-glass-mug-variant"
-            rel="noopener noreferrer"
+            prepend-icon="mdi-hamburger"
             rounded="lg"
-            target="_blank"
-            title="Ausschank"
+            title="Produkte"
             variant="tonal"
-            @click="$router.push('/ausschank')"
-          />
-        </v-col>
-
-        <v-col cols="12" md="4" sm="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            prepend-icon="mdi-beer"
-            rel="noopener noreferrer"
-            rounded="lg"
-            target="_blank"
-            title="Schnaps-Bar"
-            variant="tonal"
-            @click="$router.push('/schnaps-bar')"
+            @click="$router.push('/admin/produkte')"
           />
         </v-col>
       </v-row>
