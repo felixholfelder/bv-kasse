@@ -1,38 +1,38 @@
 <script setup lang="ts">
-  import { computed, nextTick, onMounted, ref } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { VNumberInput } from 'vuetify/components'
-  import { formatPrice } from '@/composable/usePriceUtils.ts'
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { VNumberInput } from 'vuetify/components'
+import { formatPrice } from '@/composable/usePriceUtils.ts'
 
-  const route = useRoute()
-  const params = route.query
-  const defaultChangeMatrix = [1, 2, 5, 10, 20, 50, 100]
+const route = useRoute()
+const params = route.query
+const defaultChangeMatrix = [1, 2, 5, 10, 20, 50, 100]
 
-  const price = computed(() => {
-    return Number.parseFloat(params.price as string)
-  })
+const price = computed(() => {
+  return Number.parseFloat(params.price as string)
+})
 
-  function getDefaultChange () {
-    for (const item of defaultChangeMatrix) {
-      if (price.value <= item) return item
-    }
-
-    return 0
+function getDefaultChange() {
+  for (const item of defaultChangeMatrix) {
+    if (price.value <= item) return item
   }
 
-  const givenAmount = ref(getDefaultChange())
+  return 0
+}
 
-  const change = computed(() => {
-    return givenAmount.value - price.value
-  })
+const givenAmount = ref(getDefaultChange())
 
-  const givenAmountInput = ref<InstanceType<typeof VNumberInput> | null>(null)
+const change = computed(() => {
+  return givenAmount.value - price.value
+})
 
-  onMounted(async () => {
-    await nextTick()
-    const input = givenAmountInput.value?.$el.querySelector('input')
-    setTimeout(() => input?.select(), 50)
-  })
+const givenAmountInput = ref<InstanceType<typeof VNumberInput> | null>(null)
+
+onMounted(async () => {
+  await nextTick()
+  const input = givenAmountInput.value?.$el.querySelector('input')
+  setTimeout(() => input?.select(), 50)
+})
 </script>
 
 <template>

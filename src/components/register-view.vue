@@ -40,44 +40,44 @@
 </template>
 
 <script setup lang="ts">
-  import type { CartItem } from '@/types/cartItem.ts'
-  import { computed, ref } from 'vue'
-  import CartItemCard from '@/components/cart-item.vue'
-  import TotalPrice from '@/components/total-price.vue'
+import type { CartItem } from '@/types/cartItem.ts'
+import { computed, ref } from 'vue'
+import CartItemCard from '@/components/cart-item.vue'
+import TotalPrice from '@/components/total-price.vue'
 
-  const props = defineProps<{
-    items: CartItem[]
-    route: string
-  }>()
+const props = defineProps<{
+  items: CartItem[]
+  route: string
+}>()
 
-  const cart = ref<CartItem[]>([])
+const cart = ref<CartItem[]>([])
 
-  function getAmountInCart (item: CartItem) {
-    let count = 0
-    for (const cartItem of cart.value) {
-      if (item.title === cartItem.title) count++
-    }
-
-    return count
+function getAmountInCart(item: CartItem) {
+  let count = 0
+  for (const cartItem of cart.value) {
+    if (item.title === cartItem.title) count++
   }
 
-  function addItem (item: CartItem) {
-    cart.value.push(item)
-  }
+  return count
+}
 
-  function removeItem (item: CartItem) {
-    const index = cart.value.findIndex(cartItem => cartItem.title === item.title)
-    if (index !== -1) {
-      cart.value.splice(index, 1)
-    }
-  }
+function addItem(item: CartItem) {
+  cart.value.push(item)
+}
 
-  function resetPrice () {
-    cart.value = []
+function removeItem(item: CartItem) {
+  const index = cart.value.findIndex((cartItem) => cartItem.title === item.title)
+  if (index !== -1) {
+    cart.value.splice(index, 1)
   }
+}
 
-  const appBarTitle = computed(() => {
-    const name = props.route.replace('/', '')
-    return name.charAt(0).toUpperCase() + name.slice(1)
-  })
+function resetPrice() {
+  cart.value = []
+}
+
+const appBarTitle = computed(() => {
+  const name = props.route.replace('/', '')
+  return name.charAt(0).toUpperCase() + name.slice(1)
+})
 </script>

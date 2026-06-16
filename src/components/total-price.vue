@@ -13,27 +13,27 @@
 </template>
 
 <script setup lang="ts">
-  import type { CartItem } from '@/types/cartItem.ts'
-  import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { formatPrice } from '@/composable/usePriceUtils.ts'
+import type { CartItem } from '@/types/cartItem.ts'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { formatPrice } from '@/composable/usePriceUtils.ts'
 
-  const props = defineProps<{
-    cart: CartItem[]
-  }>()
+const props = defineProps<{
+  cart: CartItem[]
+}>()
 
-  const router = useRouter()
+const router = useRouter()
 
-  const totalPrice = computed(() => {
-    let price = 0
-    for (const item of props.cart) {
-      price += item.price
-    }
-
-    return price
-  })
-
-  function checkout () {
-    router.push({ path: '/checkout', query: { price: totalPrice.value } })
+const totalPrice = computed(() => {
+  let price = 0
+  for (const item of props.cart) {
+    price += item.price
   }
+
+  return price
+})
+
+function checkout() {
+  router.push({ path: '/checkout', query: { price: totalPrice.value } })
+}
 </script>
