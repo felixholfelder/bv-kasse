@@ -5,4 +5,6 @@ export class Product {
   name = ''
   price = 0
   color = ''
+  registerId: string = uuidv4()
+  enabled = true
 }
