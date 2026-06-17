@@ -9,6 +9,9 @@ import {
   where,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
+import { Event as EventModel } from '@/types/event.ts'
+import { EventRegister } from '@/types/event_register.ts'
+import { EventRegisterProduct } from '@/types/event_register_product.ts'
 
 export function useFirestore () {
   const event = 'event'
@@ -32,10 +35,7 @@ export function useFirestore () {
 
     const snapshot = await getDocs(q)
 
-    return snapshot.docs.map(doc => ({
-      documentId: doc.id,
-      ...doc.data(),
-    }))
+    return snapshot.docs.map(doc => new EventModel(doc.id, doc.data()))
   }
 
   async function getEvent (id: string) {
@@ -46,10 +46,7 @@ export function useFirestore () {
       throw new Error(`More than one document was found with eventId ${id}.`)
     }
 
-    return {
-      documentId: snapshot.docs[0].id,
-      ...snapshot.docs[0].data(),
-    }
+    return new EventModel(snapshot.docs[0].id, snapshot.docs[0].data())
   }
 
   async function disableEvent (eventId: string) {
@@ -70,10 +67,11 @@ export function useFirestore () {
     const q = query(collection(db, event_register), where('eventId', '==', eventId))
     const snapshot = await getDocs(q)
 
-    return snapshot.docs.map(doc => ({
-      documentId: doc.id,
-      ...doc.data(),
-    }))
+    const docs = snapshot.docs
+
+    // TODO - not working
+
+    return docs.map(doc => new EventRegister(doc.id, doc.data()))
   }
 
   async function getEventRegisterById (eventRegisterId: string) {
@@ -84,10 +82,7 @@ export function useFirestore () {
       throw new Error(`More than one document was found with eventRegisterId ${eventRegisterId}.`)
     }
 
-    return {
-      documentId: snapshot.docs[0].id,
-      ...snapshot.docs[0].data(),
-    }
+    return new EventRegister(snapshot.docs[0].id, snapshot.docs[0].data())
   }
 
   async function getEventRegisterProductsByEventRegisterId (eventRegisterId: string) {
@@ -97,10 +92,7 @@ export function useFirestore () {
     )
     const snapshot = await getDocs(q)
 
-    return snapshot.docs.map(doc => ({
-      documentId: doc.id,
-      ...doc.data(),
-    }))
+    return snapshot.docs.map(doc => new EventRegisterProduct(doc.id, doc.data()))
   }
 
   async function getCurrentActiveEvent () {
@@ -115,10 +107,7 @@ export function useFirestore () {
       throw new Error(`Keine aktiven Veranstaltungen!`)
     }
 
-    return {
-      documentId: snapshot.docs[0],
-      ...snapshot.docs[0].data(),
-    }
+    return new EventModel(snapshot.docs[0], snapshot.docs[0])
   }
 
   return {

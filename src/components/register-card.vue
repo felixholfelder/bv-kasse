@@ -1,6 +1,8 @@
 <script setup lang="ts">
+  import type { EventRegister } from '@/types/event_register.ts'
+
   defineProps<{
-    modelValue: object
+    modelValue: EventRegister
   }>()
 </script>
 

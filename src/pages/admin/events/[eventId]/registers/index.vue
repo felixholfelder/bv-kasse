@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+  import type { EventRegister } from '@/types/event_register.ts'
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import RegisterCard from '@/components/register-card.vue'
@@ -38,9 +39,9 @@
 
   const { getEventRegistersByEventId } = useFirestore()
   const route = useRoute()
-  const items = ref([])
+  const items = ref<EventRegister[]>([])
 
   onMounted(async () => {
-    items.value = await getEventRegistersByEventId(route.params.eventId)
+    items.value = await getEventRegistersByEventId(route.params.eventId as string)
   })
 </script>

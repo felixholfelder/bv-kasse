@@ -1,11 +1,12 @@
 <script setup lang="ts">
+  import type { Event as EventModel } from '@/types/event.ts';
   import { onMounted, ref } from 'vue'
   import { formatTimestamp } from '@/composable/useDates.ts'
   import { useFirestore } from '@/composable/useFirestore.ts'
 
   const { getEvents, enableEvent, disableEvent } = useFirestore()
 
-  const events = ref([])
+  const events = ref<EventModel[]>([])
   onMounted(async () => {
     events.value = await getEvents()
   })

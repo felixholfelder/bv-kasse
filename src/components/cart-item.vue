@@ -31,21 +31,21 @@
 </template>
 
 <script setup lang="ts">
-  import type { Product } from '@/types/product.ts'
+  import type { EventRegisterProduct } from '@/types/event_register_product.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   defineProps<{
-    item: Product
+    item: EventRegisterProduct
     amountInCart: number
   }>()
 
   const emit = defineEmits(['add-item', 'remove-item'])
 
-  function addItem (item: Product) {
+  function addItem (item: EventRegisterProduct) {
     emit('add-item', item)
   }
 
-  function removeItemFromCart (item: Product) {
+  function removeItemFromCart (item: EventRegisterProduct) {
     emit('remove-item', item)
   }
 </script>

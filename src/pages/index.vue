@@ -34,11 +34,13 @@
 </template>
 
 <script setup lang="ts">
+  import type { Event } from '@/types/event.ts'
+  import type { EventRegister } from '@/types/event_register.ts'
   import { onMounted, ref } from 'vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
 
   const { getEventRegistersByEventId, getCurrentActiveEvent } = useFirestore()
-  const items = ref([])
+  const items = ref<EventRegister[]>()
   const showError = ref(false)
   const errorMessage = ref('')
 
@@ -47,8 +49,9 @@
     errorMessage.value = ''
 
     try {
-      const currentActiveEvent = await getCurrentActiveEvent()
+      const currentActiveEvent: Event = await getCurrentActiveEvent()
       items.value = await getEventRegistersByEventId(currentActiveEvent.id)
+      console.log(items.value)
     } catch (error: any) {
       showError.value = true
       errorMessage.value = error.message

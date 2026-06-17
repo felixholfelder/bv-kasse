@@ -7,62 +7,13 @@
 
   const items = computed(() => {
     // TODO - read from database
-    return ref<Product[]>([
-      {
-        id: '',
-        name: 'Bratwürste',
-        price: 4,
-        color: '#FF0000',
-      },
-      {
-        id: '',
-        name: 'Käswürste',
-        price: 4.5,
-        color: '#ff4d00',
-      },
-      {
-        id: '',
-        name: 'Steak',
-        price: 4.5,
-        color: '#9f4f00',
-      },
-      {
-        id: '',
-        name: 'Pommes',
-        price: 3,
-        color: '#dfc000',
-      },
-      {
-        id: '',
-        name: 'Burger',
-        price: 3,
-        color: '#00FF00',
-      },
-      {
-        id: '',
-        name: 'Knacker',
-        price: 4.5,
-        color: '#81817b',
-      },
-      {
-        id: '',
-        name: 'Breze m. Käse',
-        price: 3,
-        color: '#7b7b00',
-      },
-      {
-        id: '',
-        name: 'Breze',
-        price: 2,
-        color: '#371700',
-      },
-    ])
+    return ref<Product[]>([])
   })
 
   const isEditDialogOpen = ref(false)
-  const selectedItem = ref<Register | null>(null)
+  const selectedItem = ref<Product | null>(null)
 
-  function openEditDialog (item: Register | null = null) {
+  function openEditDialog (item: Product | null = null) {
     selectedItem.value = item
     isEditDialogOpen.value = true
   }

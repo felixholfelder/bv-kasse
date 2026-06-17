@@ -25,15 +25,16 @@
 </template>
 
 <script setup lang="ts">
+  import type { EventRegister } from '@/types/event_register.ts'
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { useFirestore } from '@/composable/useFirestore.ts'
 
   const { getEventRegisterById } = useFirestore()
   const route = useRoute()
-  const item = ref()
+  const item = ref<EventRegister>()
 
   onMounted(async () => {
-    item.value = await getEventRegisterById(route.params.eventRegisterId)
+    item.value = await getEventRegisterById(route.params.eventRegisterId as string)
   })
 </script>
