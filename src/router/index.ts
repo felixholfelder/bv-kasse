@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { auth } from '@/firebase.ts'
+import AdminEventsDetailView from '@/pages/admin/events/[eventId]/index.vue'
+import AdminEventRegisterDetailView from '@/pages/admin/events/[eventId]/registers/[eventRegisterId]/index.vue'
+import AdminEventRegisters from '@/pages/admin/events/[eventId]/registers/index.vue'
 import AdminEvents from '@/pages/admin/events/index.vue'
 import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
@@ -60,6 +63,24 @@ const routes = [
     path: '/admin/events',
     name: 'adminEvents',
     component: AdminEvents,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/events/:eventId',
+    name: 'adminEventsDetailView',
+    component: AdminEventsDetailView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/events/:eventId/registers',
+    name: 'adminEventRegisters',
+    component: AdminEventRegisters,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/events/:eventId/registers/:eventRegisterId',
+    name: 'adminEventRegisterDetailView',
+    component: AdminEventRegisterDetailView,
     meta: { requiresAuth: true },
   },
 ]
