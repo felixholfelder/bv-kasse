@@ -8,9 +8,9 @@
               <v-btn icon="mdi-arrow-left" @click="$router.back()" />
             </template>
 
-            <!-- <template #append>-->
-            <!--   <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />-->
-            <!-- </template>-->
+            <template #append>
+              <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />
+            </template>
           </v-app-bar>
         </v-row>
 

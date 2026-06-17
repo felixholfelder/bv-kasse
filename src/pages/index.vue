@@ -18,9 +18,7 @@
           <v-card
             class="py-4"
             color="surface-variant"
-            rel="noopener noreferrer"
             rounded="lg"
-            target="_blank"
             :title="item.name"
             variant="tonal"
             @click="$router.push({ name: 'eventRegister', params: { eventRegisterId: item.id } })"
