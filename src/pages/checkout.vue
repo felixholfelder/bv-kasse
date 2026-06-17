@@ -33,6 +33,31 @@
     const input = givenAmountInput.value?.$el.querySelector('input')
     setTimeout(() => input?.select(), 50)
   })
+
+  function normalizeDecimalKey (event: any) {
+    if (event.key === '.') {
+      event.preventDefault()
+
+      const input = event.target
+      const pos = input.selectionStart
+      const current = input.value
+
+      // Insert a comma at the cursor position
+      const newValue = current.slice(0, pos) + ',' + current.slice(input.selectionEnd)
+
+      // Manually dispatch an input event so Vuetify picks it up
+      const nativeInput = input
+      const nativeSetter = Object?.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value',
+      )?.set
+      nativeSetter?.call(nativeInput, newValue)
+      nativeInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+      // Restore cursor position after the inserted comma
+      nativeInput.setSelectionRange(pos + 1, pos + 1)
+    }
+  }
 </script>
 
 <template>
@@ -63,6 +88,7 @@
           :min="0"
           :precision="2"
           variant="outlined"
+          @keydown="normalizeDecimalKey"
         />
       </v-card>
 
