@@ -5,7 +5,7 @@
       :color="item.color"
       rounded="lg"
       :subtitle="formatPrice(item.price)"
-      :title="item.title"
+      :title="item.name"
       @click="addItem(item)"
     >
       <template v-if="amountInCart || amountInCart > 0" #prepend>
@@ -31,21 +31,21 @@
 </template>
 
 <script setup lang="ts">
-  import type { CartItem } from '@/types/cartItem.ts'
+  import type { EventRegisterProduct } from '@/types/event_register_product.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   defineProps<{
-    item: CartItem
+    item: EventRegisterProduct
     amountInCart: number
   }>()
 
   const emit = defineEmits(['add-item', 'remove-item'])
 
-  function addItem (item: CartItem) {
+  function addItem (item: EventRegisterProduct) {
     emit('add-item', item)
   }
 
-  function removeItemFromCart (item: CartItem) {
+  function removeItemFromCart (item: EventRegisterProduct) {
     emit('remove-item', item)
   }
 </script>

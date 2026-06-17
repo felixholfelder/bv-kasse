@@ -3,14 +3,14 @@
     <v-container class="fill-height d-flex flex-column" max-width="1100">
       <div>
         <v-row>
-          <v-app-bar :title="appBarTitle">
+          <v-app-bar>
             <template #prepend>
-              <v-icon-btn icon="mdi-arrow-left" @click="$router.back()" />
+              <v-btn icon="mdi-arrow-left" @click="$router.back()" />
             </template>
 
-            <template #append>
-              <v-icon-btn icon="mdi-trash-can-outline" @click="resetPrice" />
-            </template>
+            <!-- <template #append>-->
+            <!--   <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />-->
+            <!-- </template>-->
           </v-app-bar>
         </v-row>
 
@@ -19,7 +19,7 @@
         <v-row class="mt-16" style="margin-bottom: 80px">
           <v-col
             v-for="item in items.filter((value) => value.enabled)"
-            :key="item.title"
+            :key="item.name"
             cols="12"
             md="6"
             sm="12"
@@ -40,44 +40,43 @@
 </template>
 
 <script setup lang="ts">
-  import type { CartItem } from '@/types/cartItem.ts'
-  import { computed, ref } from 'vue'
+  import type { EventRegisterProduct } from '@/types/event_register_product.ts'
+  import { ref } from 'vue'
   import CartItemCard from '@/components/cart-item.vue'
   import TotalPrice from '@/components/total-price.vue'
+  import { useFirestore } from '@/composable/useFirestore.ts'
 
-  const props = defineProps<{
-    items: CartItem[]
-    route: string
+  defineProps<{
+    items: EventRegisterProduct[]
   }>()
 
-  const cart = ref<CartItem[]>([])
+  const { increaseCounter, decreaseCounter } = useFirestore()
 
-  function getAmountInCart (item: CartItem) {
+  const cart = ref<EventRegisterProduct[]>([])
+
+  function getAmountInCart (item: EventRegisterProduct) {
     let count = 0
     for (const cartItem of cart.value) {
-      if (item.title === cartItem.title) count++
+      if (item.id === cartItem.id) count++
     }
 
     return count
   }
 
-  function addItem (item: CartItem) {
+  async function addItem (item: EventRegisterProduct) {
+    await increaseCounter(item.documentId)
     cart.value.push(item)
   }
 
-  function removeItem (item: CartItem) {
-    const index = cart.value.findIndex(cartItem => cartItem.title === item.title)
+  async function removeItem (item: EventRegisterProduct) {
+    const index = cart.value.findIndex(cartItem => cartItem.name === item.name)
     if (index !== -1) {
       cart.value.splice(index, 1)
+      await decreaseCounter(item.documentId)
     }
   }
 
   function resetPrice () {
     cart.value = []
   }
-
-  const appBarTitle = computed(() => {
-    const name = props.route.replace('/', '')
-    return name.charAt(0).toUpperCase() + name.slice(1)
-  })
 </script>

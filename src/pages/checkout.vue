@@ -40,7 +40,7 @@
     <v-row>
       <v-app-bar title="Zahlung">
         <template #prepend>
-          <v-icon-btn icon="mdi-arrow-left" @click="$router.back()" />
+          <v-btn icon="mdi-arrow-left" @click="$router.back()" />
         </template>
       </v-app-bar>
     </v-row>
