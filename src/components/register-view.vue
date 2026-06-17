@@ -44,7 +44,7 @@
   import { ref } from 'vue'
   import CartItemCard from '@/components/cart-item.vue'
   import TotalPrice from '@/components/total-price.vue'
-  import {useFirestore} from "@/composable/useFirestore.ts";
+  import { useFirestore } from '@/composable/useFirestore.ts'
 
   defineProps<{
     items: Product[]

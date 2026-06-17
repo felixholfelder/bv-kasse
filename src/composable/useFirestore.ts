@@ -14,7 +14,6 @@ export function useFirestore () {
   const event = 'event'
   const event_register = 'event_register'
   const event_register_product = 'event_register_product'
-  const register = 'register'
 
   async function increaseCounter (documentId: string) {
     await updateDoc(doc(db, event_register_product, documentId), {
@@ -26,28 +25,6 @@ export function useFirestore () {
     await updateDoc(doc(db, event_register_product, documentId), {
       count: increment(-1),
     })
-  }
-
-  async function getCounterItem (eventId: string, productId: string) {
-    const q = query(
-      collection(db, counter_product),
-      where('eventId', '==', eventId),
-      where('productId', '==', productId),
-    )
-
-    const snapshot = await getDocs(q)
-
-    if (snapshot.docs.length > 0) {
-      throw new Error(
-        `More than one document was found with eventId ${eventId} and productId ${productId}.`,
-      )
-    }
-
-    const doc = snapshot.docs[0]
-    return {
-      documentId: doc.id,
-      ...doc.data(),
-    }
   }
 
   async function getEvents () {
@@ -109,20 +86,6 @@ export function useFirestore () {
 
     return {
       documentId: snapshot.docs[0].id,
-      ...snapshot.docs[0].data(),
-    }
-  }
-
-  async function getRegister (registerId: string) {
-    const q = query(collection(db, register), where('id', '==', registerId))
-    const snapshot = await getDocs(q)
-
-    if (snapshot.docs.length > 1) {
-      throw new Error(`More than one document was found with registerId ${registerId}.`)
-    }
-
-    return {
-      documentId: snapshot.docs[0],
       ...snapshot.docs[0].data(),
     }
   }
