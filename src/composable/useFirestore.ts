@@ -15,6 +15,7 @@ export function useFirestore () {
   const counter_product = 'counter_product'
   const event = 'event'
   const event_register = 'event_register'
+  const event_register_product = 'event_register_product'
   const register = 'register'
 
   async function createCounterItem (counterItem: ProductCounterItem) {
@@ -132,6 +133,19 @@ export function useFirestore () {
     }
   }
 
+  async function getEventRegisterProductsByEventRegisterId (eventRegisterId: string) {
+    const q = query(
+      collection(db, event_register_product),
+      where('eventRegisterId', '==', eventRegisterId),
+    )
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs.map(doc => ({
+      documentId: doc.id,
+      ...doc.data(),
+    }))
+  }
+
   return {
     updateCounterItem,
     getEvents,
@@ -141,6 +155,7 @@ export function useFirestore () {
     getEventRegistersByEventId,
     getRegister,
     getEventRegisterById,
+    getEventRegisterProductsByEventRegisterId,
     createCounterItem,
   }
 }

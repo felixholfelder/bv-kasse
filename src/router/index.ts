@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { auth } from '@/firebase.ts'
 import AdminEventsDetailView from '@/pages/admin/events/[eventId]/index.vue'
 import AdminEventRegisterDetailView from '@/pages/admin/events/[eventId]/registers/[eventRegisterId]/index.vue'
+import AdminEventRegisterProducts from '@/pages/admin/events/[eventId]/registers/[eventRegisterId]/products.vue'
 import AdminEventRegisters from '@/pages/admin/events/[eventId]/registers/index.vue'
 import AdminEvents from '@/pages/admin/events/index.vue'
 import Admin from '@/pages/admin/index.vue'
@@ -81,6 +82,12 @@ const routes = [
     path: '/admin/events/:eventId/registers/:eventRegisterId',
     name: 'adminEventRegisterDetailView',
     component: AdminEventRegisterDetailView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/events/:eventId/registers/:eventRegisterId/products',
+    name: 'adminEventRegisterProducts',
+    component: AdminEventRegisterProducts,
     meta: { requiresAuth: true },
   },
 ]

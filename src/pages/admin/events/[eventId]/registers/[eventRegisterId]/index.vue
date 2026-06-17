@@ -16,6 +16,7 @@
             rounded="lg"
             title="Produkte"
             variant="tonal"
+            @click="$router.push({ name: 'adminEventRegisterProducts' })"
           />
         </v-col>
       </v-row>
