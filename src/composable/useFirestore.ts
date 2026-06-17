@@ -155,7 +155,7 @@ export function useFirestore () {
     }
 
     if (snapshot.docs.length === 0) {
-      throw new Error(`No active event found`)
+      throw new Error(`Keine aktiven Veranstaltungen!`)
     }
 
     return {

@@ -26,6 +26,8 @@
             @click="$router.push({ name: 'eventRegister', params: { eventRegisterId: item.id } })"
           />
         </v-col>
+
+        <p v-if="showError">{{ errorMessage }}</p>
       </v-row>
     </div>
   </v-container>
@@ -37,10 +39,19 @@
 
   const { getEventRegistersByEventId, getCurrentActiveEvent } = useFirestore()
   const items = ref([])
+  const showError = ref(false)
+  const errorMessage = ref('')
 
   onMounted(async () => {
-    const currentActiveEvent = await getCurrentActiveEvent()
-    items.value = await getEventRegistersByEventId(currentActiveEvent.id)
-    console.log(items.value)
+    showError.value = false
+    errorMessage.value = ''
+
+    try {
+      const currentActiveEvent = await getCurrentActiveEvent()
+      items.value = await getEventRegistersByEventId(currentActiveEvent.id)
+    } catch (error: any) {
+      showError.value = true
+      errorMessage.value = error.message
+    }
   })
 </script>
