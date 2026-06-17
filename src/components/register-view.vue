@@ -3,7 +3,7 @@
     <v-container class="fill-height d-flex flex-column" max-width="1100">
       <div>
         <v-row>
-          <v-app-bar :title="appBarTitle">
+          <v-app-bar>
             <template #prepend>
               <v-btn icon="mdi-arrow-left" @click="$router.back()" />
             </template>
@@ -41,13 +41,12 @@
 
 <script setup lang="ts">
   import type { Product } from '@/types/product.ts'
-  import { computed, ref } from 'vue'
+  import { ref } from 'vue'
   import CartItemCard from '@/components/cart-item.vue'
   import TotalPrice from '@/components/total-price.vue'
 
-  const props = defineProps<{
+  defineProps<{
     items: Product[]
-    route: string
   }>()
 
   const cart = ref<Product[]>([])
@@ -75,9 +74,4 @@
   function resetPrice () {
     cart.value = []
   }
-
-  const appBarTitle = computed(() => {
-    const name = props.route.replace('/', '')
-    return name.charAt(0).toUpperCase() + name.slice(1)
-  })
 </script>

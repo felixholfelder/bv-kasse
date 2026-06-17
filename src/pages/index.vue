@@ -8,45 +8,22 @@
       </v-app-bar>
 
       <v-row>
-        <v-col cols="12" md="4" sm="12">
+        <v-col
+          v-for="item in items"
+          :key="item.id"
+          cols="12"
+          md="4"
+          sm="12"
+        >
           <v-card
             class="py-4"
             color="surface-variant"
-            prepend-icon="mdi-silverware-fork-knife"
             rel="noopener noreferrer"
             rounded="lg"
             target="_blank"
-            title="Essen"
+            :title="item.name"
             variant="tonal"
-            @click="$router.push('/essen')"
-          />
-        </v-col>
-
-        <v-col cols="12" md="4" sm="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            prepend-icon="mdi-glass-mug-variant"
-            rel="noopener noreferrer"
-            rounded="lg"
-            target="_blank"
-            title="Ausschank"
-            variant="tonal"
-            @click="$router.push('/ausschank')"
-          />
-        </v-col>
-
-        <v-col cols="12" md="4" sm="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            prepend-icon="mdi-beer"
-            rel="noopener noreferrer"
-            rounded="lg"
-            target="_blank"
-            title="Schnaps-Bar"
-            variant="tonal"
-            @click="$router.push('/schnaps-bar')"
+            @click="$router.push({ name: 'eventRegister', params: { eventRegisterId: item.id } })"
           />
         </v-col>
       </v-row>
@@ -54,4 +31,16 @@
   </v-container>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { onMounted, ref } from 'vue'
+  import { useFirestore } from '@/composable/useFirestore.ts'
+
+  const { getEventRegistersByEventId, getCurrentActiveEvent } = useFirestore()
+  const items = ref([])
+
+  onMounted(async () => {
+    const currentActiveEvent = await getCurrentActiveEvent()
+    items.value = await getEventRegistersByEventId(currentActiveEvent.id)
+    console.log(items.value)
+  })
+</script>

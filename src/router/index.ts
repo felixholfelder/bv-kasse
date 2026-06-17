@@ -11,6 +11,7 @@ import AdminProducts from '@/pages/admin/products.vue'
 import AdminRegisters from '@/pages/admin/registers.vue'
 import Checkout from '@/pages/checkout.vue'
 import Drinks from '@/pages/drinks.vue'
+import EventRegister from '@/pages/events/[eventRegisterId].vue'
 import Food from '@/pages/food.vue'
 import Index from '@/pages/index.vue'
 import SchnappsBar from '@/pages/schnapps-bar.vue'
@@ -36,6 +37,11 @@ const routes = [
   {
     path: '/checkout',
     component: Checkout,
+  },
+  {
+    path: '/events/:eventRegisterId',
+    name: 'eventRegister',
+    component: EventRegister,
   },
   {
     path: '/admin/login',

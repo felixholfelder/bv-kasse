@@ -146,6 +146,24 @@ export function useFirestore () {
     }))
   }
 
+  async function getCurrentActiveEvent () {
+    const q = query(collection(db, event), where('enabled', '==', true))
+    const snapshot = await getDocs(q)
+
+    if (snapshot.docs.length > 1) {
+      throw new Error(`More than active event found: ${snapshot.docs.length}!`)
+    }
+
+    if (snapshot.docs.length === 0) {
+      throw new Error(`No active event found`)
+    }
+
+    return {
+      documentId: snapshot.docs[0],
+      ...snapshot.docs[0].data(),
+    }
+  }
+
   return {
     updateCounterItem,
     getEvents,
@@ -156,6 +174,7 @@ export function useFirestore () {
     getRegister,
     getEventRegisterById,
     getEventRegisterProductsByEventRegisterId,
+    getCurrentActiveEvent,
     createCounterItem,
   }
 }
