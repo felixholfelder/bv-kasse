@@ -10,13 +10,15 @@
   const items = ref<EventRegisterProduct[]>([])
 
   onMounted(async () => {
-    items.value = await getEventRegisterProductsByEventRegisterId(route.params.eventRegisterId as string)
+    items.value = await getEventRegisterProductsByEventRegisterId(
+      route.params.eventRegisterId as string,
+    )
   })
 </script>
 
 <template>
   <div>
-    <register-view :items="items " />
+    <register-view :items="items" />
   </div>
 </template>
 

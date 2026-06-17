@@ -44,6 +44,8 @@
   const items = ref<EventRegisterProduct[]>()
 
   onMounted(async () => {
-    items.value = await getEventRegisterProductsByEventRegisterId(route.params.eventRegisterId as string)
+    items.value = await getEventRegisterProductsByEventRegisterId(
+      route.params.eventRegisterId as string,
+    )
   })
 </script>

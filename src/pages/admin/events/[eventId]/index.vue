@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Event as EventModel } from '@/types/event.ts';
+  import type { Event as EventModel } from '@/types/event.ts'
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { useFirestore } from '@/composable/useFirestore.ts'
