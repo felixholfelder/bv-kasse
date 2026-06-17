@@ -51,7 +51,6 @@
     try {
       const currentActiveEvent: Event = await getCurrentActiveEvent()
       items.value = await getEventRegistersByEventId(currentActiveEvent.id)
-      console.log(items.value)
     } catch (error: any) {
       showError.value = true
       errorMessage.value = error.message

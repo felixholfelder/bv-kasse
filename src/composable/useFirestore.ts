@@ -107,7 +107,7 @@ export function useFirestore () {
       throw new Error(`Keine aktiven Veranstaltungen!`)
     }
 
-    return new EventModel(snapshot.docs[0], snapshot.docs[0])
+    return new EventModel(snapshot.docs[0].id, snapshot.docs[0].data())
   }
 
   return {
