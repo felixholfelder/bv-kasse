@@ -17,7 +17,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="item in items" :key="item.id" @click="$router.push(`/admin/events/${item.id}`)">
+        <tr v-for="item in items" :key="item.id">
           <td>{{ item.name }}</td>
           <td>{{ formatPrice(item.price) }}</td>
           <td>{{ item.count }}</td>
