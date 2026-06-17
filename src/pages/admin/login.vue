@@ -23,7 +23,7 @@
 
     try {
       await login(username.value, password.value)
-      router.push({ name: 'home' })
+      router.push({ name: 'admin' })
     } catch (error_) {
       error.value = getErrorMessage(error_.code)
     } finally {
