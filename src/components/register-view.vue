@@ -64,8 +64,8 @@
   }
 
   async function addItem (item: EventRegisterProduct) {
-    await increaseCounter(item.documentId)
     cart.value.push(item)
+    await increaseCounter(item.documentId)
   }
 
   async function removeItem (item: EventRegisterProduct) {
