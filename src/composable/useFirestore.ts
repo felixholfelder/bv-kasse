@@ -1,9 +1,8 @@
-import type { ProductCounterItem } from '@/types/counter_product.ts'
 import {
-  addDoc,
   collection,
   doc,
   getDocs,
+  increment,
   orderBy,
   query,
   updateDoc,
@@ -12,25 +11,20 @@ import {
 import { db } from '@/firebase'
 
 export function useFirestore () {
-  const counter_product = 'counter_product'
   const event = 'event'
   const event_register = 'event_register'
   const event_register_product = 'event_register_product'
   const register = 'register'
 
-  async function createCounterItem (counterItem: ProductCounterItem) {
-    await addDoc(collection(db, counter_product), {
-      id: counterItem.id,
-      eventId: counterItem.eventId,
-      productId: counterItem.productId,
-      amount: 0,
+  async function increaseCounter (documentId: string) {
+    await updateDoc(doc(db, event_register_product, documentId), {
+      count: increment(1),
     })
   }
 
-  async function updateCounterItem (counterItem: ProductCounterItem) {
-    const item = await getCounterItem(counterItem.eventId, counterItem.productId)
-    await updateDoc(doc(db, counter_product, item.documentId), {
-      amount: item.amount + counterItem.amount,
+  async function decreaseCounter (documentId: string) {
+    await updateDoc(doc(db, event_register_product, documentId), {
+      count: increment(-1),
     })
   }
 
@@ -165,16 +159,15 @@ export function useFirestore () {
   }
 
   return {
-    updateCounterItem,
+    increaseCounter,
+    decreaseCounter,
     getEvents,
     getEvent,
     enableEvent,
     disableEvent,
     getEventRegistersByEventId,
-    getRegister,
     getEventRegisterById,
     getEventRegisterProductsByEventRegisterId,
     getCurrentActiveEvent,
-    createCounterItem,
   }
 }

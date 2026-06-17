@@ -3,14 +3,14 @@
     <v-container class="fill-height d-flex flex-column" max-width="1100">
       <div>
         <v-row>
-          <v-app-bar>
+          <v-app-bar :title="item">
             <template #prepend>
               <v-btn icon="mdi-arrow-left" @click="$router.back()" />
             </template>
 
-            <template #append>
-              <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />
-            </template>
+            <!-- <template #append>-->
+            <!--   <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />-->
+            <!-- </template>-->
           </v-app-bar>
         </v-row>
 
@@ -44,10 +44,13 @@
   import { ref } from 'vue'
   import CartItemCard from '@/components/cart-item.vue'
   import TotalPrice from '@/components/total-price.vue'
+  import {useFirestore} from "@/composable/useFirestore.ts";
 
   defineProps<{
     items: Product[]
   }>()
+
+  const { increaseCounter, decreaseCounter } = useFirestore()
 
   const cart = ref<Product[]>([])
 
@@ -60,14 +63,16 @@
     return count
   }
 
-  function addItem (item: Product) {
+  async function addItem (item: Product) {
+    await increaseCounter(item.documentId)
     cart.value.push(item)
   }
 
-  function removeItem (item: Product) {
+  async function removeItem (item: Product) {
     const index = cart.value.findIndex(cartItem => cartItem.name === item.name)
     if (index !== -1) {
       cart.value.splice(index, 1)
+      await decreaseCounter(item.documentId)
     }
   }
 
