@@ -34,7 +34,6 @@
   }
 
   function saveItem (item: Register) {
-    console.log(item.id)
     if (item.id === undefined) {
     // TODO - save new register
     } else {

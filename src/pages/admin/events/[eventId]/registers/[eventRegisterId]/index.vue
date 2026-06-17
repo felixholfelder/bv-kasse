@@ -34,7 +34,6 @@
   const item = ref()
 
   onMounted(async () => {
-    console.log(route.params.eventRegisterId)
     item.value = await getEventRegisterById(route.params.eventRegisterId)
   })
 </script>
