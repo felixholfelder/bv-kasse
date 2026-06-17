@@ -11,6 +11,7 @@
         <tr>
           <th class="text-left">Name</th>
           <th class="text-left">Preis</th>
+          <th class="text-left">Verkäufe</th>
           <!-- <th class="text-left">Aktiviert</th> -->
         </tr>
       </thead>
@@ -19,6 +20,7 @@
         <tr v-for="item in items" :key="item.id" @click="$router.push(`/admin/events/${item.id}`)">
           <td>{{ item.name }}</td>
           <td>{{ formatPrice(item.price) }}</td>
+          <td>{{ item.count }}</td>
 
           <!-- TODO - make products toggling -->
           <!--          <td @click.stop="onToggleEvent(!item.enabled, item)">-->
