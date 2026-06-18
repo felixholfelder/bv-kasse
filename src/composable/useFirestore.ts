@@ -69,8 +69,6 @@ export function useFirestore () {
 
     const docs = snapshot.docs
 
-    // TODO - not working
-
     return docs.map(doc => new EventRegister(doc.id, doc.data()))
   }
 
@@ -92,7 +90,9 @@ export function useFirestore () {
     )
     const snapshot = await getDocs(q)
 
-    return snapshot.docs.map(doc => new EventRegisterProduct(doc.id, doc.data()))
+    return snapshot.docs
+      .map(doc => new EventRegisterProduct(doc.id, doc.data()))
+      .sort((itemA, itemB) => itemA.priority - itemB.priority) // eslint-disable-line
   }
 
   async function getCurrentActiveEvent () {

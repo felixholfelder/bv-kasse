@@ -9,6 +9,7 @@ export class EventRegisterProduct {
   count = 0
   price = 0
   color = ''
+  priority = 0
 
   constructor (documentId: any, data: any) {
     this.documentId = documentId
@@ -19,5 +20,6 @@ export class EventRegisterProduct {
     this.count = data.count
     this.price = data.price
     this.color = data.color
+    this.priority = data.priority
   }
 }
