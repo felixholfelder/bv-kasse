@@ -51,7 +51,7 @@
 </script>
 <style>
 .v-card-subtitle {
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .v-badge__badge {
