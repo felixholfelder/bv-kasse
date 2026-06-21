@@ -33,18 +33,6 @@
             @click="$router.push('/admin/kassen')"
           />
         </v-col>
-
-        <v-col cols="12" md="4" sm="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            prepend-icon="mdi-hamburger"
-            rounded="lg"
-            title="Produkte"
-            variant="tonal"
-            @click="$router.push('/admin/produkte')"
-          />
-        </v-col>
       </v-row>
     </div>
   </v-container>

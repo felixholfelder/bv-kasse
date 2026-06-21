@@ -1,43 +1,44 @@
 <script setup lang="ts">
+  import type { Product } from '@/types/product.ts'
   import type { Register } from '@/types/register.ts'
-  import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
-  import RegisterDialog from '@/components/dialogs/register-dialog.vue'
+  import { useRoute } from 'vue-router'
+  import ProductDialog from '@/components/dialogs/product-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
+  import { formatPrice } from '@/composable/usePriceUtils.ts'
 
-  const { getRegisters, createRegister, updateRegister } = useFirestore()
+  const { getProductsByRegisterId } = useFirestore()
 
-  const items = ref<Register[]>([])
+  const route = useRoute()
+
+  const items = ref<Product[]>([])
 
   const isEditDialogOpen = ref(false)
-  const selectedItem = ref<Register | null>(null)
+  const selectedItem = ref<Product | null>(null)
 
   onMounted(async () => {
-    items.value = await getRegisters()
+    items.value = await getProductsByRegisterId(route.params.registerId as string)
   })
 
-  function openEditDialog (item: Register | null = null) {
+  function openEditDialog (item: Product | null = null) {
     selectedItem.value = item
     isEditDialogOpen.value = true
   }
 
-  async function saveItem (item: Register) {
+  function saveItem (item: Register) {
     if (item.id === undefined) {
-      item.id = uuidv4()
-      await createRegister(item)
+    // TODO - save new register
     } else {
-      await updateRegister(item)
+    // TODO - update existing register
     }
-
-    items.value = await getRegisters()
   }
 </script>
 
 <template>
   <div>
-    <register-dialog v-model="isEditDialogOpen" :item="selectedItem" @submit="saveItem" />
+    <product-dialog v-model="isEditDialogOpen" :item="selectedItem" @submit="saveItem" />
 
-    <v-app-bar title="Kassen">
+    <v-app-bar title="Produkte">
       <template #prepend>
         <v-btn icon="mdi-arrow-left" @click="$router.back()" />
       </template>
@@ -50,13 +51,20 @@
     <v-table class="mt-16">
       <thead>
         <tr>
+          <th />
           <th class="text-left">Name</th>
+          <th class="text-left">Preis</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
+          <td>
+            <v-badge :color="item.color" height="30" inline width="30" />
+          </td>
+
           <td>{{ item.name }}</td>
+          <td>{{ formatPrice(item.price) }}</td>
         </tr>
       </tbody>
     </v-table>

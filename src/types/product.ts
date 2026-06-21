@@ -7,6 +7,7 @@ export class Product {
   price = 0
   color = ''
   registerId: string = uuidv4()
+  priority = 0
 
   constructor (documentId: any, data: any) {
     this.documentId = documentId
@@ -15,5 +16,6 @@ export class Product {
     this.price = data.price
     this.color = data.color
     this.registerId = data.registerId
+    this.priority = data.priority
   }
 }

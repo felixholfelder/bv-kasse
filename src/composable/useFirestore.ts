@@ -14,6 +14,7 @@ import { db } from '@/firebase'
 import { Event as EventModel } from '@/types/event.ts'
 import { EventRegister } from '@/types/event_register.ts'
 import { EventRegisterProduct } from '@/types/event_register_product.ts'
+import { Product } from '@/types/product.ts'
 import { Register } from '@/types/register.ts'
 
 export function useFirestore () {
@@ -138,6 +139,15 @@ export function useFirestore () {
     })
   }
 
+  async function getProductsByRegisterId (registerId: string) {
+    const q = query(collection(db, product), where('registerId', '==', registerId))
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs
+      .map(doc => new Product(doc.id, doc.data()))
+      .sort((itemA, itemB) => itemA.priority - itemB.priority) // eslint-disable-line
+  }
+
   return {
     increaseCounter,
     decreaseCounter,
@@ -152,5 +162,6 @@ export function useFirestore () {
     getRegisters,
     createRegister,
     updateRegister,
+    getProductsByRegisterId,
   }
 }
