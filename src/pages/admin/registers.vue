@@ -1,32 +1,19 @@
 <script setup lang="ts">
   import type { Register } from '@/types/register.ts'
-  import { computed, ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import RegisterDialog from '@/components/dialogs/register-dialog.vue'
+  import { useFirestore } from '@/composable/useFirestore.ts'
 
-  const items = computed(() => {
-    // TODO - read from database
-    return ref<Register[]>([
-      {
-        id: '1',
-        name: 'Essen',
-      },
-      {
-        id: '2',
-        name: 'Ausschank',
-      },
-      {
-        id: '3',
-        name: 'Kaffee und Kuchen',
-      },
-      {
-        id: '4',
-        name: 'Schnaps-Bar',
-      },
-    ])
-  })
+  const { getRegisters } = useFirestore()
+
+  const items = ref<Register[]>([])
 
   const isEditDialogOpen = ref(false)
   const selectedItem = ref<Register | null>(null)
+
+  onMounted(async () => {
+    items.value = await getRegisters()
+  })
 
   function openEditDialog (item: Register | null = null) {
     selectedItem.value = item
@@ -64,7 +51,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="item in items.value" :key="item.id" @click="openEditDialog(item)">
+        <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
           <td>{{ item.name }}</td>
         </tr>
       </tbody>

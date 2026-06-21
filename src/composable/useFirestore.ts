@@ -12,11 +12,13 @@ import { db } from '@/firebase'
 import { Event as EventModel } from '@/types/event.ts'
 import { EventRegister } from '@/types/event_register.ts'
 import { EventRegisterProduct } from '@/types/event_register_product.ts'
+import { Register } from '@/types/register.ts'
 
 export function useFirestore () {
   const event = 'event'
   const event_register = 'event_register'
   const event_register_product = 'event_register_product'
+  const register = 'register'
 
   async function increaseCounter (documentId: string) {
     await updateDoc(doc(db, event_register_product, documentId), {
@@ -110,6 +112,13 @@ export function useFirestore () {
     return new EventModel(snapshot.docs[0].id, snapshot.docs[0].data())
   }
 
+  async function getRegisters () {
+    const q = query(collection(db, register))
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs.map(doc => new Register(doc.id, doc.data()))
+  }
+
   return {
     increaseCounter,
     decreaseCounter,
@@ -121,5 +130,6 @@ export function useFirestore () {
     getEventRegisterById,
     getEventRegisterProductsByEventRegisterId,
     getCurrentActiveEvent,
+    getRegisters,
   }
 }
