@@ -57,6 +57,7 @@
       <thead>
         <tr>
           <th class="text-left">Name</th>
+          <th></th>
         </tr>
       </thead>
 
@@ -64,8 +65,8 @@
         <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
           <td>{{ item.name }}</td>
 
-          <td>
-            <v-btn icon="mdi-arrow-right" @click="openProducts(item)" />
+          <td class="text-right">
+            <v-icon-btn icon="mdi-arrow-right" @click="openProducts(item)" />
           </td>
         </tr>
       </tbody>
