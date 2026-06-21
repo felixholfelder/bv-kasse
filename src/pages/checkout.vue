@@ -78,18 +78,22 @@
           <div>{{ formatPrice(price) }}</div>
         </v-row>
 
-        <div class="mb-4">Gegeben:</div>
+        <v-row class="mb-4">
+          <v-col cols="12">
+            <div class="mb-4">Gegeben:</div>
 
-        <v-number-input
-          ref="givenAmountInput"
-          v-model="givenAmount"
-          autofocus
-          decimal-separator=","
-          :min="0"
-          :precision="2"
-          variant="outlined"
-          @keydown="normalizeDecimalKey"
-        />
+            <v-number-input
+              ref="givenAmountInput"
+              v-model="givenAmount"
+              autofocus
+              decimal-separator=","
+              :min="0"
+              :precision="2"
+              variant="outlined"
+              @keydown="normalizeDecimalKey"
+            />
+          </v-col>
+        </v-row>
       </v-card>
 
       <v-divider class="mb-4" />

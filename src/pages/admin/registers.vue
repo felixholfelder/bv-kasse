@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import type { Register } from '@/types/register.ts'
+  import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
   import RegisterDialog from '@/components/dialogs/register-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
 
-  const { getRegisters } = useFirestore()
+  const { getRegisters, createRegister, updateRegister } = useFirestore()
 
   const items = ref<Register[]>([])
 
@@ -20,12 +21,15 @@
     isEditDialogOpen.value = true
   }
 
-  function saveItem (item: Register) {
+  async function saveItem (item: Register) {
     if (item.id === undefined) {
-    // TODO - save new register
+      item.id = uuidv4()
+      await createRegister(item)
     } else {
-    // TODO - update existing register
+      await updateRegister(item)
     }
+
+    items.value = await getRegisters()
   }
 </script>
 

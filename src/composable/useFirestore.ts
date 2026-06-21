@@ -1,10 +1,12 @@
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
   increment,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore'
@@ -19,6 +21,7 @@ export function useFirestore () {
   const event_register = 'event_register'
   const event_register_product = 'event_register_product'
   const register = 'register'
+  const product = 'product'
 
   async function increaseCounter (documentId: string) {
     await updateDoc(doc(db, event_register_product, documentId), {
@@ -113,10 +116,26 @@ export function useFirestore () {
   }
 
   async function getRegisters () {
-    const q = query(collection(db, register))
+    const q = query(collection(db, register), orderBy('name', 'desc'))
     const snapshot = await getDocs(q)
 
     return snapshot.docs.map(doc => new Register(doc.id, doc.data()))
+  }
+
+  async function createRegister (item: Register) {
+    const q = await addDoc(collection(db, register), {
+      id: item.id,
+      name: item.name,
+    })
+
+    return q.id
+  }
+
+  async function updateRegister (item: Register) {
+    await setDoc(doc(db, register, item.documentId), {
+      id: item.id,
+      name: item.name,
+    })
   }
 
   return {
@@ -131,5 +150,7 @@ export function useFirestore () {
     getEventRegisterProductsByEventRegisterId,
     getCurrentActiveEvent,
     getRegisters,
+    createRegister,
+    updateRegister,
   }
 }
