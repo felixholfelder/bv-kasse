@@ -7,11 +7,21 @@ export class EventRegister {
   enabled = false
   eventId: string = uuidv4()
 
-  constructor (documentId: any, data: any) {
+  constructor (documentId: string, id: string, name: string, enabled: boolean, eventId: string) {
     this.documentId = documentId
-    this.id = data.id
-    this.name = data.name
-    this.enabled = data.enabled
-    this.eventId = data.eventId
+    this.id = id
+    this.name = name
+    this.enabled = enabled
+    this.eventId = eventId
+  }
+
+  static fromData (documentId: any, data: any) {
+    return new EventRegister(
+      documentId,
+      data.id,
+      data.name,
+      data.enabled,
+      data.eventId,
+    )
   }
 }

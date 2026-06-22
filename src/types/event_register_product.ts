@@ -11,15 +11,29 @@ export class EventRegisterProduct {
   color = ''
   priority = 0
 
-  constructor (documentId: any, data: any) {
+  constructor (documentId: string, id: string, name: string, enabled: boolean, eventRegisterId: string, count: number, price: number, color: string, priority: number) {
     this.documentId = documentId
-    this.id = data.id
-    this.name = data.name
-    this.enabled = data.enabled
-    this.eventRegisterId = data.eventRegisterId
-    this.count = data.count
-    this.price = data.price
-    this.color = data.color
-    this.priority = data.priority
+    this.id = id
+    this.name = name
+    this.enabled = enabled
+    this.eventRegisterId = eventRegisterId
+    this.count = count
+    this.price = price
+    this.color = color
+    this.priority = priority
+  }
+
+  static fromData (documentId: any, data: any) {
+    return new EventRegisterProduct(
+      documentId,
+      data.id,
+      data.name,
+      data.enabled,
+      data.eventRegisterId,
+      data.count,
+      data.price,
+      data.color,
+      data.priority,
+    )
   }
 }
