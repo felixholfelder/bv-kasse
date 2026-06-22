@@ -57,7 +57,7 @@
       <thead>
         <tr>
           <th class="text-left">Name</th>
-          <th></th>
+          <th />
         </tr>
       </thead>
 

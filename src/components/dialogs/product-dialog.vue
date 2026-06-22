@@ -16,6 +16,7 @@
 
   const name = ref('')
   const price = ref(0)
+  const priority = ref(0)
   const color = ref('')
 
   const openColorPickerDialog = ref(false)
@@ -25,6 +26,7 @@
     newItem => {
       name.value = newItem?.name ?? ''
       price.value = newItem?.price ?? 0
+      priority.value = newItem?.priority ?? 0
       color.value = newItem?.color ?? ''
     },
     { immediate: true },
@@ -36,8 +38,14 @@
 
   function submit () {
     const payload = isEditing.value
-      ? { ...props.item, name: name.value, price: price.value, color: color.value }
-      : { name: name.value, price: price.value, color: color.value }
+      ? {
+        ...props.item,
+        name: name.value,
+        price: price.value,
+        priority: priority.value,
+        color: color.value,
+      }
+      : { name: name.value, price: price.value, priority: priority.value, color: color.value }
 
     emit('submit', payload)
     emit('update:model-value', false)
@@ -61,6 +69,8 @@
         :precision="2"
         variant="outlined"
       />
+
+      <v-number-input v-model="priority" label="Priorität" :min="0" variant="outlined" />
 
       <v-btn append-icon="mdi-open-in-new" @click="openColorPickerDialog = true">
         <template #prepend>

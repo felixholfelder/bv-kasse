@@ -139,6 +139,30 @@ export function useFirestore () {
     })
   }
 
+  async function createProduct (item: Product) {
+    const q = await addDoc(collection(db, product), {
+      id: item.id,
+      name: item.name,
+      color: item.color,
+      price: item.price,
+      priority: item.priority,
+      registerId: item.registerId,
+    })
+
+    return q.id
+  }
+
+  async function updateProduct (item: Product) {
+    await setDoc(doc(db, product, item.documentId), {
+      id: item.id,
+      name: item.name,
+      color: item.color,
+      price: item.price,
+      priority: item.priority,
+      registerId: item.registerId,
+    })
+  }
+
   async function getProductsByRegisterId (registerId: string) {
     const q = query(collection(db, product), where('registerId', '==', registerId))
     const snapshot = await getDocs(q)
@@ -163,5 +187,7 @@ export function useFirestore () {
     createRegister,
     updateRegister,
     getProductsByRegisterId,
+    createProduct,
+    updateProduct,
   }
 }

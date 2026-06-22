@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import type { Product } from '@/types/product.ts'
-  import type { Register } from '@/types/register.ts'
+  import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import ProductDialog from '@/components/dialogs/product-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
-  const { getProductsByRegisterId } = useFirestore()
+  const { getProductsByRegisterId, createProduct, updateProduct } = useFirestore()
 
   const route = useRoute()
 
@@ -25,12 +25,16 @@
     isEditDialogOpen.value = true
   }
 
-  function saveItem (item: Register) {
+  async function saveItem (item: Product) {
     if (item.id === undefined) {
-    // TODO - save new register
+      item.id = uuidv4()
+      item.registerId = route.params.registerId as string
+      await createProduct(item)
     } else {
-    // TODO - update existing register
+      await updateProduct(item)
     }
+
+    items.value = await getProductsByRegisterId(route.params.registerId as string)
   }
 </script>
 
@@ -52,6 +56,7 @@
       <thead>
         <tr>
           <th />
+          <th class="text-left">Prio</th>
           <th class="text-left">Name</th>
           <th class="text-left">Preis</th>
         </tr>
@@ -62,6 +67,8 @@
           <td>
             <v-badge :color="item.color" height="30" inline width="30" />
           </td>
+
+          <td>{{ item.priority }}</td>
 
           <td>{{ item.name }}</td>
           <td>{{ formatPrice(item.price) }}</td>
