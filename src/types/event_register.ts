@@ -16,12 +16,6 @@ export class EventRegister {
   }
 
   static fromData (documentId: any, data: any) {
-    return new EventRegister(
-      documentId,
-      data.id,
-      data.name,
-      data.enabled,
-      data.eventId,
-    )
+    return new EventRegister(documentId, data.id, data.name, data.enabled, data.eventId)
   }
 }

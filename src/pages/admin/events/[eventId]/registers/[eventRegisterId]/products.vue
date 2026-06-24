@@ -12,7 +12,7 @@
           <th class="text-left">Name</th>
           <th class="text-left">Preis</th>
           <th class="text-left">Verkäufe</th>
-          <!-- <th class="text-left">Aktiviert</th> -->
+          <th class="text-left">Aktiviert</th>
         </tr>
       </thead>
 
@@ -22,10 +22,9 @@
           <td>{{ formatPrice(item.price) }}</td>
           <td>{{ item.count }}</td>
 
-          <!-- TODO - make products toggling -->
-          <!--          <td @click.stop="onToggleEvent(!item.enabled, item)">-->
-          <!--            <v-switch :model-value="item.enabled" />-->
-          <!--          </td>-->
+          <td @click.stop="onToggleEvent(!item.enabled, item)">
+            <v-checkbox :model-value="item.enabled" />
+          </td>
         </tr>
       </tbody>
     </v-table>
@@ -43,9 +42,19 @@
   const route = useRoute()
   const items = ref<EventRegisterProduct[]>()
 
+  const { enableEventRegisterProduct, disableEventRegisterProduct } = useFirestore()
+
   onMounted(async () => {
     items.value = await getEventRegisterProductsByEventRegisterId(
       route.params.eventRegisterId as string,
     )
   })
+
+  async function onToggleEvent (toggle: boolean, item: any) {
+    await (toggle ? enableEventRegisterProduct(item.id) : disableEventRegisterProduct(item.id))
+
+    items.value = await getEventRegisterProductsByEventRegisterId(
+      route.params.eventRegisterId as string,
+    )
+  }
 </script>

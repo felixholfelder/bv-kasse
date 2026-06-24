@@ -24,7 +24,9 @@
   )
 
   function submit () {
-    const payload = isEditing.value ? { ...props.item, name: name.value, date: date.value } : { name: name.value, date: date.value }
+    const payload = isEditing.value
+      ? { ...props.item, name: name.value, date: date.value }
+      : { name: name.value, date: date.value }
 
     emit('submit', payload)
     emit('update:model-value', false)

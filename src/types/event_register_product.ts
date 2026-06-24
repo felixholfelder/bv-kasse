@@ -11,7 +11,17 @@ export class EventRegisterProduct {
   color = ''
   priority = 0
 
-  constructor (documentId: string, id: string, name: string, enabled: boolean, eventRegisterId: string, count: number, price: number, color: string, priority: number) {
+  constructor (
+    documentId: string,
+    id: string,
+    name: string,
+    enabled: boolean,
+    eventRegisterId: string,
+    count: number,
+    price: number,
+    color: string,
+    priority: number,
+  ) {
     this.documentId = documentId
     this.id = id
     this.name = name

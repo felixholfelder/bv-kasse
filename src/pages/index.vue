@@ -37,7 +37,7 @@
   import { onMounted, ref } from 'vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
 
-  const { getEventRegistersByEventId, getCurrentActiveEvent } = useFirestore()
+  const { getActiveEventRegistersByEventId, getCurrentActiveEvent } = useFirestore()
   const items = ref<EventRegister[]>()
   const showError = ref(false)
   const errorMessage = ref('')
@@ -48,7 +48,7 @@
 
     try {
       const currentActiveEvent: Event = await getCurrentActiveEvent()
-      items.value = await getEventRegistersByEventId(currentActiveEvent.id)
+      items.value = await getActiveEventRegistersByEventId(currentActiveEvent.id)
     } catch (error: any) {
       showError.value = true
       errorMessage.value = error.message

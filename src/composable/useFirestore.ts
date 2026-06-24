@@ -79,6 +79,19 @@ export function useFirestore () {
     return docs.map(doc => EventRegister.fromData(doc.id, doc.data()))
   }
 
+  async function getActiveEventRegistersByEventId (eventId: string) {
+    const q = query(
+      collection(db, event_register),
+      where('eventId', '==', eventId),
+      where('enabled', '==', true),
+    )
+    const snapshot = await getDocs(q)
+
+    const docs = snapshot.docs
+
+    return docs.map(doc => EventRegister.fromData(doc.id, doc.data()))
+  }
+
   async function getEventRegisterById (eventRegisterId: string) {
     const q = query(collection(db, event_register), where('id', '==', eventRegisterId))
     const snapshot = await getDocs(q)
@@ -88,6 +101,20 @@ export function useFirestore () {
     }
 
     return EventRegister.fromData(snapshot.docs[0].id, snapshot.docs[0].data())
+  }
+
+  async function disableEventRegister (eventRegisterId: string) {
+    const item = await getEventRegisterById(eventRegisterId)
+    await updateDoc(doc(db, event_register, item.documentId), {
+      enabled: false,
+    })
+  }
+
+  async function enableEventRegister (eventRegisterId: string) {
+    const item = await getEventRegisterById(eventRegisterId)
+    await updateDoc(doc(db, event_register, item.documentId), {
+      enabled: true,
+    })
   }
 
   async function getEventRegisterProductsByEventRegisterId (eventRegisterId: string) {
@@ -100,6 +127,35 @@ export function useFirestore () {
     return snapshot.docs
       .map(doc => EventRegisterProduct.fromData(doc.id, doc.data()))
       .sort((itemA, itemB) => itemA.priority - itemB.priority) // eslint-disable-line
+  }
+
+  async function getEventRegisterProductsById (eventRegisterProductId: string) {
+    const q = query(
+      collection(db, event_register_product),
+      where('id', '==', eventRegisterProductId),
+    )
+    const snapshot = await getDocs(q)
+    if (snapshot.docs.length > 1) {
+      throw new Error(
+        `More than one document was found with eventRegisterProductId ${eventRegisterProductId}.`,
+      )
+    }
+
+    return EventRegisterProduct.fromData(snapshot.docs[0].id, snapshot.docs[0].data())
+  }
+
+  async function disableEventRegisterProduct (eventRegisterProductId: string) {
+    const item = await getEventRegisterProductsById(eventRegisterProductId)
+    await updateDoc(doc(db, event_register_product, item.documentId), {
+      enabled: false,
+    })
+  }
+
+  async function enableEventRegisterProduct (eventRegisterProductId: string) {
+    const item = await getEventRegisterProductsById(eventRegisterProductId)
+    await updateDoc(doc(db, event_register_product, item.documentId), {
+      enabled: true,
+    })
   }
 
   async function createEventRegisterProduct (item: EventRegisterProduct) {
@@ -207,7 +263,17 @@ export function useFirestore () {
       const products: Product[] = await getProductsByRegisterId(register.id)
       for (const product of products) {
         const eventRegisterProductId = uuidv4()
-        const eventRegisterProduct = new EventRegisterProduct('', eventRegisterProductId, product.name, true, eventRegister.id, 0, product.price, product.color, product.priority)
+        const eventRegisterProduct = new EventRegisterProduct(
+          '',
+          eventRegisterProductId,
+          product.name,
+          true,
+          eventRegister.id,
+          0,
+          product.price,
+          product.color,
+          product.priority,
+        )
         await createEventRegisterProduct(eventRegisterProduct)
       }
     }
@@ -239,7 +305,11 @@ export function useFirestore () {
     disableEvent,
     getEventRegistersByEventId,
     getEventRegisterById,
+    enableEventRegister,
+    disableEventRegister,
     getEventRegisterProductsByEventRegisterId,
+    enableEventRegisterProduct,
+    disableEventRegisterProduct,
     getCurrentActiveEvent,
     getRegisters,
     createRegister,
@@ -249,5 +319,6 @@ export function useFirestore () {
     updateProduct,
     createEvent,
     updateEvent,
+    getActiveEventRegistersByEventId,
   }
 }

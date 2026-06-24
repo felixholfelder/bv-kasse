@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { Event as EventModel } from '@/types/event.ts'
   import { v4 as uuidv4 } from 'uuid'
-  import { computed, onMounted, ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import EventDialog from '@/components/dialogs/event-dialog.vue'
   import { formatTimestamp } from '@/composable/useDates.ts'
   import { useFirestore } from '@/composable/useFirestore.ts'
