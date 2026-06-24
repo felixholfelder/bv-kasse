@@ -54,10 +54,6 @@
       <template #prepend>
         <v-btn icon="mdi-arrow-left" @click="$router.back()" />
       </template>
-
-      <template #append>
-        <v-btn icon="mdi-plus" @click="openEditDialog()" />
-      </template>
     </v-app-bar>
 
     <v-table class="mt-16">
