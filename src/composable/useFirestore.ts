@@ -309,7 +309,7 @@ export function useFirestore () {
   }
 
   async function getShoppingList (shoppingListId: string) {
-    const q = query(collection(db, shoppingListId), where('id', '==', shoppingListId))
+    const q = query(collection(db, shopping_list), where('id', '==', shoppingListId))
     const snapshot = await getDocs(q)
 
     if (snapshot.docs.length > 1) {
@@ -402,6 +402,7 @@ export function useFirestore () {
     updateEvent,
     getActiveEventRegistersByEventId,
     getShoppingLists,
+    getShoppingList,
     createShoppingList,
     updateShoppingList,
     getShoppingListEntries,
