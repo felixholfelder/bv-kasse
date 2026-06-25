@@ -16,7 +16,7 @@
             rounded="lg"
             title="Events"
             variant="tonal"
-            @click="$router.push('/admin/events')"
+            @click="$router.push({ name: 'adminEvents' })"
           />
         </v-col>
 
@@ -30,7 +30,7 @@
             rounded="lg"
             title="Kassen"
             variant="tonal"
-            @click="$router.push('/admin/kassen')"
+            @click="$router.push({ name: 'adminRegisters' })"
           />
         </v-col>
       </v-row>
