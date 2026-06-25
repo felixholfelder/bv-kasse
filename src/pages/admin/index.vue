@@ -33,6 +33,18 @@
             @click="$router.push({ name: 'adminRegisters' })"
           />
         </v-col>
+
+        <v-col cols="12" md="4" sm="12">
+          <v-card
+            class="py-4"
+            color="surface-variant"
+            prepend-icon="mdi-cart-outline"
+            rounded="lg"
+            title="Einkaufslisten"
+            variant="tonal"
+            @click="$router.push({ name: 'adminShoppingLists' })"
+          />
+        </v-col>
       </v-row>
     </div>
   </v-container>

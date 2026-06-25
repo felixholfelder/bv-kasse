@@ -17,6 +17,8 @@ import { EventRegister } from '@/types/event_register.ts'
 import { EventRegisterProduct } from '@/types/event_register_product.ts'
 import { Product } from '@/types/product.ts'
 import { Register } from '@/types/register.ts'
+import { ShoppingList } from '@/types/shopping_list.ts'
+import { ShoppingListEntry } from '@/types/shopping_list_entry.ts'
 
 export function useFirestore () {
   const event = 'event'
@@ -24,6 +26,8 @@ export function useFirestore () {
   const event_register_product = 'event_register_product'
   const register = 'register'
   const product = 'product'
+  const shopping_list = 'shopping_list'
+  const shopping_list_entry = 'shopping_list_entry'
 
   async function increaseCounter (documentId: string) {
     await updateDoc(doc(db, event_register_product, documentId), {
@@ -296,6 +300,83 @@ export function useFirestore () {
       .sort((itemA, itemB) => itemA.priority - itemB.priority) // eslint-disable-line
   }
 
+  async function getShoppingLists () {
+    const q = query(collection(db, shopping_list))
+
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs.map(doc => ShoppingList.fromData(doc.id, doc.data()))
+  }
+
+  async function getShoppingList (shoppingListId: string) {
+    const q = query(collection(db, shoppingListId), where('id', '==', shoppingListId))
+    const snapshot = await getDocs(q)
+
+    if (snapshot.docs.length > 1) {
+      throw new Error(`More than active event found: ${snapshot.docs.length}!`)
+    }
+
+    if (snapshot.docs.length === 0) {
+      throw new Error(`Keine Einkauflisten gefunden: ${shoppingListId}!`)
+    }
+
+    return ShoppingList.fromData(snapshot.docs[0].id, snapshot.docs[0].data())
+  }
+
+  async function createShoppingList (item: ShoppingList, presetShoppingListId: string | null) {
+    await addDoc(collection(db, shopping_list), {
+      id: item.id,
+      name: item.name,
+    })
+
+    if (presetShoppingListId != null) {
+      const presetShoppingList = await getShoppingListEntries(presetShoppingListId)
+      for (const entry of presetShoppingList) {
+        entry.id = uuidv4()
+        entry.shoppingListId = item.id
+        await createShoppingListEntry(entry)
+      }
+    }
+  }
+
+  async function updateShoppingList (item: ShoppingList) {
+    await setDoc(doc(db, shopping_list, item.documentId), {
+      id: item.id,
+      name: item.name,
+    })
+  }
+
+  async function getShoppingListEntries (shoppingListId: string) {
+    const q = query(
+      collection(db, shopping_list_entry),
+      where('shoppingListId', '==', shoppingListId),
+    )
+
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs.map(doc => new ShoppingListEntry(doc.id, doc.data()))
+  }
+
+  async function createShoppingListEntry (item: ShoppingListEntry) {
+    return await addDoc(collection(db, shopping_list_entry), {
+      id: item.id,
+      shoppingListId: item.shoppingListId,
+      name: item.name,
+      amount: item.amount,
+      stock: item.stock,
+    })
+  }
+
+  async function updateShoppingListEntry (item: ShoppingListEntry) {
+    await setDoc(doc(db, shopping_list_entry, item.documentId), {
+      id: item.id,
+      shoppingListId: item.shoppingListId,
+      name: item.name,
+      amount: item.amount,
+      stock: item.stock,
+    })
+  }
+
   return {
     increaseCounter,
     decreaseCounter,
@@ -320,5 +401,11 @@ export function useFirestore () {
     createEvent,
     updateEvent,
     getActiveEventRegistersByEventId,
+    getShoppingLists,
+    createShoppingList,
+    updateShoppingList,
+    getShoppingListEntries,
+    createShoppingListEntry,
+    updateShoppingListEntry,
   }
 }

@@ -9,6 +9,8 @@ import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
 import AdminProducts from '@/pages/admin/registers/[registerId]/products.vue'
 import AdminRegisters from '@/pages/admin/registers/index.vue'
+import AdminShoppingListDetailView from '@/pages/admin/shopping-lists/[shoppingListId]/index.vue'
+import AdminShoppingLists from '@/pages/admin/shopping-lists/index.vue'
 import Checkout from '@/pages/checkout.vue'
 import EventRegister from '@/pages/events/[eventRegisterId].vue'
 import Index from '@/pages/index.vue'
@@ -43,6 +45,18 @@ const routes = [
     path: '/admin/kassen',
     name: 'adminRegisters',
     component: AdminRegisters,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/einkaufslisten',
+    name: 'adminShoppingLists',
+    component: AdminShoppingLists,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/einkaufslisten/:shoppingListId',
+    name: 'adminShoppingListDetailView',
+    component: AdminShoppingListDetailView,
     meta: { requiresAuth: true },
   },
   {
