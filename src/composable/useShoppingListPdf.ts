@@ -46,7 +46,7 @@ export function useShoppingListPdf () {
     autoTable(doc, {
       startY: tableStartY,
       head: [['Erledigt', 'Name', 'Menge', 'Vorrat']],
-      body, // @ts-ignore
+      body,
       styles: { fontSize: 11, cellPadding: 2.5, minCellHeight: rowHeight },
       headStyles: { fillColor: [41, 128, 185] },
       alternateRowStyles: { fillColor: [245, 245, 245] },
