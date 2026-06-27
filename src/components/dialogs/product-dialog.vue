@@ -3,10 +3,11 @@
   import { computed, ref, watch } from 'vue'
   import { VNumberInput } from 'vuetify/components'
   import ColorPickerDialog from '@/components/dialogs/color-picker-dialog.vue'
+  import type {EventRegisterProduct} from "@/types/event_register_product.ts";
 
   const props = defineProps<{
     modelValue: boolean
-    item?: Product | null
+    item?: Product | EventRegisterProduct | null
   }>()
 
   const emit = defineEmits(['submit', 'update:model-value'])

@@ -177,6 +177,19 @@ export function useFirestore () {
     return q.id
   }
 
+  async function updateEventRegisterProduct (item: EventRegisterProduct) {
+    await updateDoc(doc(db, event_register_product, item.documentId), {
+      id: item.id,
+      eventRegisterId: item.eventRegisterId,
+      enabled: item.enabled,
+      name: item.name,
+      price: item.price,
+      priority: item.priority,
+      color: item.color,
+      count: item.count,
+    })
+  }
+
   async function createEventRegister (item: EventRegister) {
     const q = await addDoc(collection(db, event_register), {
       id: item.id,
@@ -391,6 +404,8 @@ export function useFirestore () {
     getEventRegisterProductsByEventRegisterId,
     enableEventRegisterProduct,
     disableEventRegisterProduct,
+    createEventRegisterProduct,
+    updateEventRegisterProduct,
     getCurrentActiveEvent,
     getRegisters,
     createRegister,
