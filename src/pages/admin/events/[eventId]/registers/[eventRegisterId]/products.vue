@@ -39,19 +39,23 @@
 
 <script setup lang="ts">
   import type { EventRegisterProduct } from '@/types/event_register_product.ts'
+  import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
+  import ProductDialog from '@/components/dialogs/product-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
-  import EventDialog from "@/components/dialogs/event-dialog.vue";
-  import ProductDialog from "@/components/dialogs/product-dialog.vue";
-  import type {Event as EventModel} from "@/types/event.ts";
-  import {v4 as uuidv4} from "uuid";
 
   const route = useRoute()
   const items = ref<EventRegisterProduct[]>()
 
-  const { getEventRegisterProductsByEventRegisterId, enableEventRegisterProduct, disableEventRegisterProduct, createEventRegisterProduct, updateEventRegisterProduct } = useFirestore()
+  const {
+    getEventRegisterProductsByEventRegisterId,
+    enableEventRegisterProduct,
+    disableEventRegisterProduct,
+    createEventRegisterProduct,
+    updateEventRegisterProduct,
+  } = useFirestore()
 
   const selectedItem = ref<EventRegisterProduct | null>(null)
   const isEditDialogOpen = ref(false)
@@ -84,6 +88,8 @@
       await updateEventRegisterProduct(item)
     }
 
-    items.value = await getEventRegisterProductsByEventRegisterId(route.params.eventRegisterId as string)
+    items.value = await getEventRegisterProductsByEventRegisterId(
+      route.params.eventRegisterId as string,
+    )
   }
 </script>

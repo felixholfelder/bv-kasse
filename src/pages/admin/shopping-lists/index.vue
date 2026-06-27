@@ -16,7 +16,6 @@
 
   onMounted(async () => {
     items.value = await getShoppingLists()
-    console.log(items)
   })
 
   function openEditDialog (item: ShoppingList | null = null) {

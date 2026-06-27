@@ -12,7 +12,7 @@ export class EventRegisterProduct {
   priority = 0
 
   constructor (
-    documentId: string,
+    documentId: any,
     id: string,
     name: string,
     enabled: boolean,

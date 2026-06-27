@@ -1,9 +1,9 @@
 <script setup lang="ts">
+  import type { EventRegisterProduct } from '@/types/event_register_product.ts'
   import type { Product } from '@/types/product.ts'
   import { computed, ref, watch } from 'vue'
   import { VNumberInput } from 'vuetify/components'
   import ColorPickerDialog from '@/components/dialogs/color-picker-dialog.vue'
-  import type {EventRegisterProduct} from "@/types/event_register_product.ts";
 
   const props = defineProps<{
     modelValue: boolean

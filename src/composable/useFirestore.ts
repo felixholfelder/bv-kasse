@@ -201,6 +201,40 @@ export function useFirestore () {
     return q.id
   }
 
+  async function createEventRegisterByPreset (
+    name: string,
+    registerId: string | null,
+    eventId: string,
+  ) {
+    const eventRegisterId = uuidv4()
+    const q = await addDoc(collection(db, event_register), {
+      id: eventRegisterId,
+      eventId,
+      name,
+      enabled: false,
+    })
+
+    if (registerId !== null) {
+      const eventRegisterProducts = await getProductsByRegisterId(registerId)
+      for (const p of eventRegisterProducts) {
+        const model = new EventRegisterProduct(
+          null,
+          uuidv4(),
+          p.name,
+          false,
+          eventRegisterId,
+          0,
+          p.price,
+          p.color,
+          p.priority,
+        )
+        await createEventRegisterProduct(model)
+      }
+    }
+
+    return q.id
+  }
+
   async function getCurrentActiveEvent () {
     const q = query(collection(db, event), where('enabled', '==', true))
     const snapshot = await getDocs(q)
@@ -399,6 +433,7 @@ export function useFirestore () {
     disableEvent,
     getEventRegistersByEventId,
     getEventRegisterById,
+    createEventRegisterByPreset,
     enableEventRegister,
     disableEventRegister,
     getEventRegisterProductsByEventRegisterId,
