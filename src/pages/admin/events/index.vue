@@ -16,13 +16,12 @@
     items.value = await getEvents()
   })
 
-  function openEditDialog (item: EventModel) {
+  function openEditDialog (item: EventModel | null = null) {
     selectedItem.value = item
     isEditDialogOpen.value = true
   }
 
   async function onToggleEvent (toggle: boolean, item: any) {
-    // TODO - maybe refactor this when multiple events can happen at a time
     if (toggle) {
       for (const e of items.value) {
         disableEvent(e.id)
@@ -54,6 +53,8 @@
       <template #prepend>
         <v-btn icon="mdi-arrow-left" @click="$router.back()" />
       </template>
+
+      <v-btn icon="mdi-plus" @click="openEditDialog()" />
     </v-app-bar>
 
     <v-table class="mt-16">
@@ -62,16 +63,21 @@
           <th class="text-left">Name</th>
           <th class="text-left">Datum</th>
           <th class="text-left">Aktiviert</th>
+          <th />
         </tr>
       </thead>
 
       <tbody>
-        <tr v-for="item in items" :key="item.id" @click="$router.push(`/admin/events/${item.id}`)">
+        <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
           <td>{{ item.name }}</td>
           <td>{{ formatTimestamp(item.date) }}</td>
 
           <td @click.stop="onToggleEvent(!item.enabled, item)">
-            <v-switch :model-value="item.enabled" />
+            <v-checkbox :model-value="item.enabled" />
+          </td>
+
+          <td class="text-right">
+            <v-icon-btn icon="mdi-arrow-right" @click="$router.push(`/admin/events/${item.id}`)" />
           </td>
         </tr>
       </tbody>
