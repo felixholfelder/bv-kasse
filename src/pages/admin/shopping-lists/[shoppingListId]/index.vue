@@ -13,6 +13,7 @@
     getShoppingListEntries,
     createShoppingListEntry,
     updateShoppingListEntry,
+    deleteShoppingListEntry,
   } = useFirestore()
 
   const route = useRoute()
@@ -27,9 +28,13 @@
   const { printShoppingList } = useShoppingListPdf()
 
   onMounted(async () => {
-    items.value = await getShoppingListEntries(route.params.shoppingListId as string)
+    await refreshList()
     list.value = await getShoppingList(route.params.shoppingListId as string)
   })
+
+  async function refreshList () {
+    items.value = await getShoppingListEntries(route.params.shoppingListId as string)
+  }
 
   function handlePrint () {
     printShoppingList(items.value, list.value?.name)
@@ -49,7 +54,12 @@
       await updateShoppingListEntry(item)
     }
 
-    items.value = await getShoppingListEntries(route.params.shoppingListId as string)
+    await refreshList()
+  }
+
+  async function deleteItem (item: ShoppingListEntry) {
+    await deleteShoppingListEntry(item)
+    await refreshList()
   }
 </script>
 
@@ -82,6 +92,7 @@
           <th class="text-left">Name</th>
           <th class="text-left">Restbestand</th>
           <th class="text-left">Menge</th>
+          <th class="text-left">Löschen</th>
         </tr>
       </thead>
 
@@ -90,6 +101,10 @@
           <td>{{ item.name }}</td>
           <td>{{ item.stock }}</td>
           <td>{{ item.amount }}</td>
+
+          <td>
+            <v-icon-btn icon="mdi-delete" @click.stop="deleteItem(item)" />
+          </td>
         </tr>
       </tbody>
     </v-table>

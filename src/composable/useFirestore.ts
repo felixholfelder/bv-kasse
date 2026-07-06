@@ -1,3 +1,4 @@
+import { deleteDoc } from '@firebase/firestore'
 import {
   addDoc,
   collection,
@@ -424,6 +425,10 @@ export function useFirestore () {
     })
   }
 
+  async function deleteShoppingListEntry (item: ShoppingListEntry) {
+    await deleteDoc(doc(db, shopping_list_entry, item.documentId))
+  }
+
   return {
     increaseCounter,
     decreaseCounter,
@@ -458,5 +463,6 @@ export function useFirestore () {
     getShoppingListEntries,
     createShoppingListEntry,
     updateShoppingListEntry,
+    deleteShoppingListEntry,
   }
 }
