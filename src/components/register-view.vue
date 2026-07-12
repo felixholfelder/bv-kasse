@@ -44,13 +44,14 @@
   import { ref } from 'vue'
   import CartItemCard from '@/components/cart-item.vue'
   import TotalPrice from '@/components/total-price.vue'
-  import { useFirestore } from '@/composable/useFirestore.ts'
+  import { useCounterStore } from '@/stores/useCounter.ts'
+  import { ProductCounterEvent } from '@/types/counter_product.ts'
 
   defineProps<{
     items: EventRegisterProduct[]
   }>()
 
-  const { increaseCounter, decreaseCounter } = useFirestore()
+  const { addQueueItem } = useCounterStore()
 
   const cart = ref<EventRegisterProduct[]>([])
 
@@ -65,14 +66,14 @@
 
   async function addItem (item: EventRegisterProduct) {
     cart.value.push(item)
-    await increaseCounter(item.documentId)
+    addQueueItem(new ProductCounterEvent(item.documentId, true))
   }
 
   async function removeItem (item: EventRegisterProduct) {
     const index = cart.value.findIndex(cartItem => cartItem.name === item.name)
     if (index !== -1) {
       cart.value.splice(index, 1)
-      await decreaseCounter(item.documentId)
+      addQueueItem(new ProductCounterEvent(item.documentId, false))
     }
   }
 
