@@ -9,7 +9,7 @@
             </template>
 
             <template #append>
-              <v-btn icon="mdi-trash-can-outline" @click="resetPrice" />
+              <v-btn icon="mdi-currency-eur" @click="openCheckout" />
             </template>
           </v-app-bar>
         </v-row>
@@ -41,9 +41,9 @@
 
 <script setup lang="ts">
   import type { EventRegisterProduct } from '@/types/event_register_product.ts'
-  import { ref } from 'vue'
+  import { computed, ref } from 'vue'
+  import { useRouter } from 'vue-router'
   import CartItemCard from '@/components/cart-item.vue'
-  import TotalPrice from '@/components/total-price.vue'
   import { useCounterStore } from '@/stores/useCounter.ts'
   import { ProductCounterEvent } from '@/types/counter_product.ts'
 
@@ -52,6 +52,7 @@
   }>()
 
   const { addQueueItem } = useCounterStore()
+  const router = useRouter()
 
   const cart = ref<EventRegisterProduct[]>([])
 
@@ -79,5 +80,18 @@
 
   function resetPrice () {
     cart.value = []
+  }
+
+  const totalPrice = computed(() => {
+    let price = 0
+    for (const item of cart.value) {
+      price += item.price
+    }
+
+    return price
+  })
+
+  function openCheckout () {
+    router.push({ path: '/checkout', query: { price: totalPrice.value } })
   }
 </script>

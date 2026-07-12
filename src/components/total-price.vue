@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-bottom-navigation class="text-center d-flex align-center" height="80" @click="checkout">
-      <v-avatar class="ml-4 mr-4" icon="mdi-currency-eur" size="60" variant="tonal" />
+    <v-bottom-navigation class="text-center d-flex align-center" height="80" @click="emit('reset-price')">
+      <v-avatar class="ml-4 mr-4" icon="mdi-check" size="60" variant="tonal" />
 
       <v-spacer />
 
@@ -15,14 +15,13 @@
 <script setup lang="ts">
   import type { EventRegisterProduct } from '@/types/event_register_product.ts'
   import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   const props = defineProps<{
     cart: EventRegisterProduct[]
   }>()
 
-  const router = useRouter()
+  const emit = defineEmits(['reset-price'])
 
   const totalPrice = computed(() => {
     let price = 0
@@ -32,8 +31,4 @@
 
     return price
   })
-
-  function checkout () {
-    router.push({ path: '/checkout', query: { price: totalPrice.value } })
-  }
 </script>
