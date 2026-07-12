@@ -16,14 +16,14 @@ export const useCounterStore = defineStore('counter', () => {
     queue.value = queue.value.filter(i => i.documentId !== item.documentId)
   }
 
-  function processQueue () {
+  async function processQueue () {
+    if (!navigator.onLine) {
+      return
+    }
+
     for (const item of queue.value) {
       try {
-        if (item.increase) {
-          increaseCounter(item.documentId)
-        } else {
-          decreaseCounter(item.documentId)
-        }
+        await (item.increase ? increaseCounter(item.documentId) : decreaseCounter(item.documentId))
         removeItem(item)
       } catch (error: any) {
         console.error(error)
