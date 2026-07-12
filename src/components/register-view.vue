@@ -44,6 +44,7 @@
   import { computed, ref } from 'vue'
   import { useRouter } from 'vue-router'
   import CartItemCard from '@/components/cart-item.vue'
+  import TotalPrice from '@/components/total-price.vue'
   import { useCounterStore } from '@/stores/useCounter.ts'
   import { ProductCounterEvent } from '@/types/counter_product.ts'
 
