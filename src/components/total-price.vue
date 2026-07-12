@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-bottom-navigation class="text-center d-flex align-center" height="80" @click="emit('reset-price')">
+    <v-bottom-navigation
+      class="text-center d-flex align-center"
+      height="80"
+      @click="emit('reset-price')"
+    >
       <v-avatar class="ml-4 mr-4" icon="mdi-check" size="60" variant="tonal" />
 
       <v-spacer />

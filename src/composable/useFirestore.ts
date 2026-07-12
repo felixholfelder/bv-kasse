@@ -134,6 +134,24 @@ export function useFirestore () {
       .sort((itemA, itemB) => itemA.priority - itemB.priority) // eslint-disable-line
   }
 
+  async function getActiveEventRegisterProductsByEventId (eventId: string) {
+    const result: EventRegisterProduct[] = []
+    const eventRegisters = await getEventRegistersByEventId(eventId)
+
+    for (const eventRegister of eventRegisters) {
+      if (!eventRegister.enabled) {
+        continue
+      }
+
+      const eventRegisterProducts = await getEventRegisterProductsByEventRegisterId(
+        eventRegister.id,
+      )
+      result.push(...eventRegisterProducts.filter((item: EventRegisterProduct) => item.enabled))
+    }
+
+    return result
+  }
+
   async function getEventRegisterProductsById (eventRegisterProductId: string) {
     const q = query(
       collection(db, event_register_product),
@@ -442,6 +460,7 @@ export function useFirestore () {
     enableEventRegister,
     disableEventRegister,
     getEventRegisterProductsByEventRegisterId,
+    getActiveEventRegisterProductsByEventId,
     enableEventRegisterProduct,
     disableEventRegisterProduct,
     createEventRegisterProduct,

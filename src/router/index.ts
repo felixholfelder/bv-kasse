@@ -9,6 +9,8 @@ import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
 import AdminProducts from '@/pages/admin/registers/[registerId]/products.vue'
 import AdminRegisters from '@/pages/admin/registers/index.vue'
+import AdminSalesByEvent from '@/pages/admin/sales/[eventId].vue'
+import AdminSales from '@/pages/admin/sales/index.vue'
 import AdminShoppingListDetailView from '@/pages/admin/shopping-lists/[shoppingListId]/index.vue'
 import AdminShoppingLists from '@/pages/admin/shopping-lists/index.vue'
 import Checkout from '@/pages/checkout.vue'
@@ -39,6 +41,18 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: Admin,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/sales',
+    name: 'adminSales',
+    component: AdminSales,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/sales/:eventId',
+    name: 'adminSalesByEvent',
+    component: AdminSalesByEvent,
     meta: { requiresAuth: true },
   },
   {
