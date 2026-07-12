@@ -16,7 +16,6 @@
           <th class="text-left">Priorität</th>
           <th class="text-left">Name</th>
           <th class="text-left">Preis</th>
-          <th class="text-left">Verkäufe</th>
           <th class="text-left">Aktiviert</th>
         </tr>
       </thead>
@@ -26,7 +25,6 @@
           <td>{{ item.priority }}</td>
           <td>{{ item.name }}</td>
           <td>{{ formatPrice(item.price) }}</td>
-          <td>{{ item.count }}</td>
 
           <td @click.stop="onToggleEvent(!item.enabled, item)">
             <v-checkbox :model-value="item.enabled" />
