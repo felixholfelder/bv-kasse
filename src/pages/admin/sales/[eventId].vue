@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { EventRegisterProduct } from '@/types/event_register_product.ts'
-  import { onMounted, ref } from 'vue'
+  import { computed, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { useFirestore } from '@/composable/useFirestore.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
@@ -14,6 +14,14 @@
   onMounted(async () => {
     items.value = await getActiveEventRegisterProductsByEventId(route.params.eventId as string)
   })
+
+  const totalPrice = computed(() => {
+    let total = 0
+    for (const item of items.value) {
+      total += item.price * item.count
+    }
+    return total
+  })
 </script>
 
 <template>
@@ -24,7 +32,19 @@
       </template>
     </v-app-bar>
 
-    <v-table class="mt-16">
+    <v-row class="mt-16 pa-4 text-headline-small">
+      <v-col>
+        <div>Gesamt</div>
+      </v-col>
+
+      <v-col class="text-right">
+        <div>{{ formatPrice(totalPrice) }}</div>
+      </v-col>
+    </v-row>
+
+    <v-divider />
+
+    <v-table>
       <thead>
         <tr>
           <th class="text-left">Name</th>
