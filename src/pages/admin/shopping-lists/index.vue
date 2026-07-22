@@ -28,6 +28,7 @@
   }
 
   async function saveItem (item: {
+    documentId: string | undefined
     id: string | undefined
     name: string
     presetShoppingListId: string | null
@@ -38,7 +39,7 @@
 
       await createShoppingList(newList, item.presetShoppingListId)
     } else {
-      await updateShoppingList(newList)
+      await updateShoppingList(item as ShoppingList)
     }
 
     items.value = await getShoppingLists()
