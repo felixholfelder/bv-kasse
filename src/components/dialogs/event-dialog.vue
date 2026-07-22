@@ -1,10 +1,12 @@
 <script setup lang="ts">
-  import type { Register } from '@/types/register.ts'
+  import type { Event } from '@/types/event.ts'
+  import { Timestamp } from 'firebase/firestore'
   import { computed, ref, watch } from 'vue'
+  import { formatTimestamp } from '@/composable/useDates.ts'
 
   const props = defineProps<{
     modelValue: boolean
-    item?: Register | null
+    item?: Event | null
   }>()
 
   const emit = defineEmits(['submit', 'update:model-value'])
@@ -13,12 +15,13 @@
   const title = computed(() => (isEditing.value ? 'Event bearbeiten' : 'Event erstellen'))
 
   const name = ref('')
-  const date = ref(new Date())
+  const date = ref('')
 
   watch(
     () => props.item,
     newItem => {
       name.value = newItem?.name ?? ''
+      date.value = formatTimestamp(newItem?.date || Timestamp.now(), 'en-US')
     },
     { immediate: true },
   )

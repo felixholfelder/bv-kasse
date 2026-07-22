@@ -11,9 +11,12 @@ export function useShortDate () {
     .replaceAll('.', '')
 }
 
-export function formatTimestamp (timestamp: Timestamp): string {
+export function formatTimestamp (timestamp: Timestamp, lang = 'de-DE'): string {
+  if (!timestamp) {
+    return ''
+  }
   const date = toRaw(timestamp).toDate()
-  return new Date(date).toLocaleDateString('de-DE', {
+  return new Date(date).toLocaleDateString(lang, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
