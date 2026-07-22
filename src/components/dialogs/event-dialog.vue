@@ -15,7 +15,7 @@
   const title = computed(() => (isEditing.value ? 'Event bearbeiten' : 'Event erstellen'))
 
   const name = ref('')
-  const date = ref('')
+  const date = ref<Date>(new Date())
 
   watch(
     () => props.item,
