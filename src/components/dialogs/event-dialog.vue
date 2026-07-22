@@ -2,7 +2,7 @@
   import type { Event } from '@/types/event.ts'
   import { Timestamp } from 'firebase/firestore'
   import { computed, ref, watch } from 'vue'
-  import { formatTimestamp } from '@/composable/useDates.ts'
+  import { getDateFromTimestamp } from '@/composable/useDates.ts'
 
   const props = defineProps<{
     modelValue: boolean
@@ -21,7 +21,7 @@
     () => props.item,
     newItem => {
       name.value = newItem?.name ?? ''
-      date.value = formatTimestamp(newItem?.date || Timestamp.now(), 'en-US')
+      date.value = getDateFromTimestamp(newItem?.date || Timestamp.now())
     },
     { immediate: true },
   )

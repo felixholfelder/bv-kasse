@@ -15,10 +15,15 @@ export function formatTimestamp (timestamp: Timestamp, lang = 'de-DE'): string {
   if (!timestamp) {
     return ''
   }
+  console.log(timestamp)
   const date = toRaw(timestamp).toDate()
   return new Date(date).toLocaleDateString(lang, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
   })
+}
+
+export function getDateFromTimestamp (timestamp: Timestamp): Date {
+  return timestamp.toDate()
 }
