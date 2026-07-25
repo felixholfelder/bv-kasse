@@ -90,7 +90,6 @@ export function usePriceLists () {
   }
 
   async function createPriceListEntry (item: PriceListEntry) {
-    console.log(item)
     return await addDoc(collection(db, price_list_entry), {
       id: item.id,
       priceListId: item.priceListId,

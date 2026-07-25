@@ -15,7 +15,6 @@ export function formatTimestamp (timestamp: Timestamp, lang = 'de-DE'): string {
   if (!timestamp) {
     return ''
   }
-  console.log(timestamp)
   const date = toRaw(timestamp).toDate()
   return new Date(date).toLocaleDateString(lang, {
     day: '2-digit',
