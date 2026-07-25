@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import type { PriceList } from '@/types/price_list.ts'
   import type { PriceListEntry } from '@/types/price_list_entry.ts'
+  import Sortable from 'sortablejs'
   import { v4 as uuidv4 } from 'uuid'
-  import { onMounted, ref } from 'vue'
+  import { nextTick, onMounted, ref, watch } from 'vue'
   import { useRoute } from 'vue-router'
   import PriceListEntryDialog from '@/components/dialogs/price-list-entry-dialog.vue'
   import { usePriceListPdf } from '@/composable/usePriceListPdf.ts'
@@ -30,17 +31,35 @@
 
   const { printPriceList } = usePriceListPdf()
 
+  const tbodyRef = ref<HTMLElement | null>(null)
+  let sortableInstance: Sortable | null = null
+
   onMounted(async () => {
     await refreshList()
-    list.value = await getPriceList(route.params.shoppingListId as string)
+    list.value = await getPriceList(route.params.priceListId as string)
+    await nextTick()
+    initSortable()
   })
 
+  function initSortable () {
+    if (!tbodyRef.value) return
+
+    sortableInstance?.destroy()
+
+    sortableInstance = Sortable.create(tbodyRef.value, {
+      handle: '.drag-handle',
+      animation: 150,
+      onEnd: onDragEnd,
+    })
+  }
+
   async function refreshList () {
-    items.value = await getPriceListEntries(route.params.priceListId as string)
+    const fetched = await getPriceListEntries(route.params.priceListId as string)
+    items.value = [...fetched].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
   }
 
   function handlePrint () {
-    printPriceList(items.value, list.value?.name)
+    printPriceList(items.value, list.value)
   }
 
   function openEditDialog (item: PriceListEntry | null = null) {
@@ -53,6 +72,8 @@
       item.id = uuidv4()
       item.priceListId = route.params.priceListId as string
       item.enabled = true
+      const maxSortOrder = Math.max(0, ...items.value.map(i => i.sortOrder ?? 0))
+      item.sortOrder = maxSortOrder + 1
       await createPriceListEntry(item)
     } else {
       await updatePriceListEntry(item)
@@ -69,6 +90,22 @@
   async function onToggleEvent (toggle: boolean, item: any) {
     await (toggle ? enablePriceListEntry(item.id) : disablePriceListEntry(item.id))
     await refreshList()
+  }
+
+  // SortableJS manipuliert das DOM direkt (ohne Vue), daher lesen wir
+  // nach dem Drop die neue Reihenfolge aus dem DOM aus und synchronisieren
+  // damit den Vue-State + die Backend-Daten.
+  async function onDragEnd (event: Sortable.SortableEvent) {
+    const { oldIndex, newIndex } = event
+    if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
+
+    const moved = items.value.splice(oldIndex, 1)[0]
+    items.value.splice(newIndex, 0, moved)
+
+    const updates = items.value.map((item, index) => ({ ...item, sortOrder: index + 1 }))
+    items.value = updates
+
+    await Promise.all(updates.map(item => updatePriceListEntry(item)))
   }
 </script>
 
@@ -94,6 +131,7 @@
     <v-table class="mt-16">
       <thead>
         <tr>
+          <th style="width: 40px" />
           <th class="text-left">Titel</th>
           <th class="text-left">Preis</th>
           <th class="text-left">Aktiviert</th>
@@ -101,8 +139,12 @@
         </tr>
       </thead>
 
-      <tbody>
-        <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
+      <tbody ref="tbodyRef">
+        <tr v-for="item in items" :key="item.id" :data-id="item.id" @click="openEditDialog(item)">
+          <td class="drag-handle" style="cursor: grab; width: 40px" @click.stop>
+            <v-icon>mdi-drag</v-icon>
+          </td>
+
           <td>
             <p>{{ item.title }}</p>
             <p>{{ item.subtitle }}</p>

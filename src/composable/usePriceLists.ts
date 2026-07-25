@@ -98,6 +98,7 @@ export function usePriceLists () {
       subtitle: item.subtitle,
       price: item.price,
       enabled: item.enabled,
+      sortOrder: item.sortOrder,
     })
   }
 
@@ -109,6 +110,7 @@ export function usePriceLists () {
       subtitle: item.subtitle,
       price: item.price,
       enabled: item.enabled,
+      sortOrder: item.sortOrder,
     })
   }
 
