@@ -7,6 +7,7 @@ import AdminEventRegisters from '@/pages/admin/events/[eventId]/registers/index.
 import AdminEvents from '@/pages/admin/events/index.vue'
 import Admin from '@/pages/admin/index.vue'
 import AdminLogin from '@/pages/admin/login.vue'
+import AdminPriceLists from '@/pages/admin/price-lists/index.vue'
 import AdminProducts from '@/pages/admin/registers/[registerId]/products.vue'
 import AdminRegisters from '@/pages/admin/registers/index.vue'
 import AdminSalesByEvent from '@/pages/admin/sales/[eventId].vue'
@@ -107,6 +108,12 @@ const routes = [
     path: '/admin/events/:eventId/registers/:eventRegisterId/products',
     name: 'adminEventRegisterProducts',
     component: AdminEventRegisterProducts,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/price-lists',
+    name: 'adminPriceLists',
+    component: AdminPriceLists,
     meta: { requiresAuth: true },
   },
 ]
