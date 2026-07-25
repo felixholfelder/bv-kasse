@@ -36,6 +36,7 @@ export function usePriceLists () {
     await addDoc(collection(db, price_list), {
       id: item.id,
       name: item.name,
+      title: item.title,
     })
 
     if (presetPriceListId != null) {
@@ -52,6 +53,7 @@ export function usePriceLists () {
     await setDoc(doc(db, price_list, item.documentId), {
       id: item.id,
       name: item.name,
+      title: item.title,
     })
   }
 

@@ -39,8 +39,8 @@
 
   function submit () {
     const payload = isEditing.value
-      ? { ...props.item, name: name.value, presetShoppingListId: selectedPresetPriceList.value }
-      : { name: name.value, presetShoppingListId: selectedPresetPriceList.value }
+      ? { ...props.item, name: name.value, title: title.value, presetShoppingListId: selectedPresetPriceList.value }
+      : { name: name.value, title: title.value, presetShoppingListId: selectedPresetPriceList.value }
 
     emit('submit', payload)
     emit('update:model-value', false)

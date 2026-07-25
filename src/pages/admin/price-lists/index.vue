@@ -36,6 +36,7 @@
     presetPriceListId: string | null
   }) {
     const newList = new PriceList(null, item.id || '', item.name, item.title)
+    console.log(newList)
     if (item.id === undefined) {
       newList.id = uuidv4()
 
