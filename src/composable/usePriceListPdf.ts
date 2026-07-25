@@ -1,16 +1,16 @@
+import type { PriceList } from '@/types/price_list.ts'
+import type { PriceListEntry } from '@/types/price_list_entry.ts'
 import type { ShoppingListEntry } from '@/types/shopping_list_entry.ts'
 import jsPDF from 'jspdf'
 import autoTable, { type RowInput } from 'jspdf-autotable'
-import type { PriceListEntry } from '@/types/price_list_entry.ts'
-import type { PriceList } from '@/types/price_list.ts'
-import { formatPrice } from '@/composable/usePriceUtils.ts'
 import logoUrl from '@/assets/logo.png'
+import { formatPrice } from '@/composable/usePriceUtils.ts'
 
 function loadImageAsBase64 (url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
-    img.onload = () => {
+    img.addEventListener('load', () => {
       const canvas = document.createElement('canvas')
       canvas.width = img.naturalWidth
       canvas.height = img.naturalHeight
@@ -21,10 +21,60 @@ function loadImageAsBase64 (url: string): Promise<string> {
       }
       ctx.drawImage(img, 0, 0)
       resolve(canvas.toDataURL('image/png'))
-    }
+    })
     img.onerror = reject
     img.src = url
   })
+}
+
+// Berechnet Schrift- und Zeilengrößen, sodass alle Einträge auf eine Seite passen
+function calculateLayoutSizes (entries: PriceListEntry[], availableHeight: number) {
+  const SAFETY_MARGIN = 0.97 // 3% Puffer gegen Rundungsdifferenzen
+  const safeAvailableHeight = availableHeight * SAFETY_MARGIN
+
+  const hasSubtitleCount = entries.filter(e => e.subtitle).length
+  const noSubtitleCount = entries.length - hasSubtitleCount
+
+  // Grenzen, damit die Schrift weder unleserlich klein noch unnötig riesig wird
+  const MIN_TITLE_FONT = 8
+  const MAX_TITLE_FONT = 36
+  const MIN_SUBTITLE_FONT = 6.5
+  const MAX_SUBTITLE_FONT = 20
+
+  // Verhältnisse, wie sie in der bisherigen Version verwendet wurden
+  const SUBTITLE_FONT_RATIO = 20 / 24 // subTitleFontSize / titleFontSize
+  const ROW_HEIGHT_RATIO = 30 / 24 // rowHeight / titleFontSize (Zeile ohne Subtitel)
+  const SUBTITLE_ROW_HEIGHT_RATIO = 30 / 24 // subtitleRowHeight / titleFontSize (mit Subtitel)
+
+  // Binäre Suche über die Titel-Schriftgröße, um die größte passende Größe zu finden
+  let low = MIN_TITLE_FONT
+  let high = MAX_TITLE_FONT
+  let bestTitleFontSize = MIN_TITLE_FONT
+
+  for (let i = 0; i < 25; i++) {
+    const mid = (low + high) / 2
+    const rowHeight = mid * ROW_HEIGHT_RATIO
+    const subtitleRowHeight = mid * SUBTITLE_ROW_HEIGHT_RATIO
+
+    const totalHeight = noSubtitleCount * rowHeight + hasSubtitleCount * subtitleRowHeight
+
+    if (totalHeight <= safeAvailableHeight) {
+      bestTitleFontSize = mid
+      low = mid
+    } else {
+      high = mid
+    }
+  }
+
+  const titleFontSize = Math.min(MAX_TITLE_FONT, Math.max(MIN_TITLE_FONT, bestTitleFontSize))
+  const subTitleFontSize = Math.min(
+    MAX_SUBTITLE_FONT,
+    Math.max(MIN_SUBTITLE_FONT, titleFontSize * SUBTITLE_FONT_RATIO),
+  )
+  const rowHeight = titleFontSize * ROW_HEIGHT_RATIO
+  const subtitleRowHeight = titleFontSize * SUBTITLE_ROW_HEIGHT_RATIO
+
+  return { titleFontSize, subTitleFontSize, rowHeight, subtitleRowHeight }
 }
 
 export function usePriceListPdf () {
@@ -44,15 +94,7 @@ export function usePriceListPdf () {
     const pageHeight = doc.internal.pageSize.getHeight()
     const marginLeft = 14
     const marginRight = 14
-    const rowHeight = 30
-    const subtitleRowHeight = 30
-    const titleFontSize = 24
-    const subTitleFontSize = 20
-
-    // Zeilenabstand aus der Schriftgröße ableiten (statt fest verdrahtet)
-    const titleLineHeight = titleFontSize * 0.35 * 1.15      // ≈ 9.7mm bei 24pt
-    const subtitleLineHeight = subTitleFontSize * 0.35 * 1.15 // ≈ 8.05mm bei 20pt
-    const titleSubtitleGap = 2 // zusätzlicher Freiraum zwischen den beiden Zeilen
+    const marginBottom = 14
 
     const colWidths = {
       name: pageWidth - marginLeft - marginRight - 45,
@@ -78,10 +120,23 @@ export function usePriceListPdf () {
     drawBackground()
 
     const tableStartY = 36
+    const availableHeight = pageHeight - tableStartY - marginBottom
 
-    const rowMeta = entries.map(e => ({ title: e.title, subtitle: e.subtitle }))
+    // Nur aktivierte Einträge werden gedruckt – EINMAL filtern und
+    // danach konsistent für Layout-Berechnung, body UND rowMeta verwenden
+    const printableEntries = entries.filter(e => e.enabled)
 
-    const body = <RowInput[]>entries.map(e => ['', formatPrice(e.price)])
+    // Schrift- und Zeilengrößen so berechnen, dass alles auf eine Seite passt
+    const { titleFontSize, subTitleFontSize, rowHeight, subtitleRowHeight }
+      = calculateLayoutSizes(printableEntries, availableHeight)
+
+    const rowMeta = printableEntries.map(e => ({
+      title: e.title,
+      subtitle: e.subtitle,
+      price: formatPrice(e.price),
+    }))
+
+    const body = <RowInput[]>printableEntries.map(() => ['', ''])
 
     // Titel der Liste – oben mittig, groß
     doc.setFontSize(28)
@@ -89,15 +144,21 @@ export function usePriceListPdf () {
     doc.text(priceList.title, pageWidth / 2, 22, { align: 'center' })
     doc.setFont('helvetica', 'normal')
 
-    // Tabelle – ohne Kopfzeile, ohne farbige Hinterlegung, ohne Checkboxen
+    // Zeilenabstand aus der Schriftgröße ableiten
+    const titleLineHeight = titleFontSize * 0.35 * 1.15
+    const subtitleLineHeight = subTitleFontSize * 0.35 * 1.15
+    const titleSubtitleGap = titleFontSize * 0.1
+
     autoTable(doc, {
       startY: tableStartY,
+      margin: { left: marginLeft, right: marginRight, bottom: marginBottom },
       body,
       theme: 'plain',
       showHead: 'never',
-      styles: { fontSize: titleFontSize, cellPadding: 3.5, minCellHeight: rowHeight },
+      styles: { fontSize: titleFontSize, cellPadding: 1.5, minCellHeight: rowHeight },
       tableLineWidth: 0,
       tableLineColor: 255,
+      rowPageBreak: 'avoid',
       columnStyles: {
         0: { cellWidth: colWidths.name, lineWidth: 0 },
         1: { cellWidth: colWidths.preis, halign: 'right', lineWidth: 0 },
@@ -111,12 +172,17 @@ export function usePriceListPdf () {
         }
       },
       didDrawCell (data) {
-        if (data.column.index === 0 && data.row.section === 'body') {
-          const meta = rowMeta[data.row.index]
-          if (!meta) return
+        const meta = rowMeta[data.row.index]
+        if (!meta || data.row.section !== 'body') {
+          return
+        }
 
-          const { x, y, height } = data.cell
-          const textX = x + data.cell.padding('left')
+        const { x, y, height } = data.cell
+        const padding = data.cell.padding('left')
+
+        if (data.column.index === 0) {
+          // Namensspalte: Titel (+ Subtitel)
+          const textX = x + padding
 
           if (meta.subtitle) {
             const blockHeight = titleLineHeight + titleSubtitleGap + subtitleLineHeight
@@ -127,14 +193,31 @@ export function usePriceListPdf () {
             doc.text(meta.title, textX, startY + titleLineHeight * 0.75)
 
             doc.setFontSize(subTitleFontSize)
-            doc.setTextColor(130)
-            doc.text(meta.subtitle, textX, startY + titleLineHeight + titleSubtitleGap + subtitleLineHeight * 0.75)
+            doc.setTextColor(70)
+            doc.text(
+              meta.subtitle,
+              textX,
+              startY + titleLineHeight + titleSubtitleGap + subtitleLineHeight * 0.75,
+            )
             doc.setTextColor(0)
           } else {
             doc.setFontSize(titleFontSize)
             doc.setTextColor(0)
             doc.text(meta.title, textX, y + height / 2 + titleLineHeight * 0.25)
           }
+        }
+
+        if (data.column.index === 1) {
+          // Preisspalte: rechtsbündig, auf gleicher Baseline wie der Titel
+          const textX = x + data.cell.width - data.cell.padding('right')
+
+          const titleBaselineY = meta.subtitle
+            ? y + (height - (titleLineHeight + titleSubtitleGap + subtitleLineHeight)) / 2 + titleLineHeight * 0.75
+            : y + height / 2 + titleLineHeight * 0.25
+
+          doc.setFontSize(titleFontSize)
+          doc.setTextColor(0)
+          doc.text(meta.price, textX, titleBaselineY, { align: 'right' })
         }
       },
       willDrawPage () {
