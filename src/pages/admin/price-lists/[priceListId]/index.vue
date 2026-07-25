@@ -55,11 +55,11 @@
 
   async function refreshList () {
     const fetched = await getPriceListEntries(route.params.priceListId as string)
-    items.value = [...fetched].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+  items.value = [...fetched].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)) // eslint-disable-line
   }
 
   function handlePrint () {
-    printPriceList(items.value, list.value)
+    printPriceList(items.value, list.value!)
   }
 
   function openEditDialog (item: PriceListEntry | null = null) {

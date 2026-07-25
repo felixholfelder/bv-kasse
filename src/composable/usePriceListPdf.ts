@@ -22,7 +22,9 @@ function loadImageAsBase64 (url: string): Promise<string> {
       ctx.drawImage(img, 0, 0)
       resolve(canvas.toDataURL('image/png'))
     })
-    img.onerror = reject
+    img.addEventListener('error', () => {
+      reject(new Error(`Bild konnte nicht geladen werden: ${url}`))
+    })
     img.src = url
   })
 }
@@ -127,8 +129,10 @@ export function usePriceListPdf () {
     const printableEntries = entries.filter(e => e.enabled)
 
     // Schrift- und Zeilengrößen so berechnen, dass alles auf eine Seite passt
-    const { titleFontSize, subTitleFontSize, rowHeight, subtitleRowHeight }
-      = calculateLayoutSizes(printableEntries, availableHeight)
+    const { titleFontSize, subTitleFontSize, rowHeight, subtitleRowHeight } = calculateLayoutSizes(
+      printableEntries,
+      availableHeight,
+    )
 
     const rowMeta = printableEntries.map(e => ({
       title: e.title,
@@ -212,7 +216,9 @@ export function usePriceListPdf () {
           const textX = x + data.cell.width - data.cell.padding('right')
 
           const titleBaselineY = meta.subtitle
-            ? y + (height - (titleLineHeight + titleSubtitleGap + subtitleLineHeight)) / 2 + titleLineHeight * 0.75
+            ? y
+            + (height - (titleLineHeight + titleSubtitleGap + subtitleLineHeight)) / 2
+            + titleLineHeight * 0.75
             : y + height / 2 + titleLineHeight * 0.25
 
           doc.setFontSize(titleFontSize)
