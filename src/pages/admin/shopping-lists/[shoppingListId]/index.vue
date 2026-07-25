@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ShoppingList } from '@/types/shopping_list.ts'
+  import type { PriceList } from '@/types/price_list.ts'
   import type { ShoppingListEntry } from '@/types/shopping_list_entry.ts'
   import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
@@ -20,7 +20,7 @@
 
   const items = ref<ShoppingListEntry[]>([])
 
-  const list = ref<ShoppingList>()
+  const list = ref<PriceList>()
 
   const isEditDialogOpen = ref(false)
   const selectedItem = ref<ShoppingListEntry | null>(null)

@@ -57,6 +57,18 @@
             @click="$router.push({ name: 'adminSales' })"
           />
         </v-col>
+
+        <v-col cols="12" md="4" sm="12">
+          <v-card
+            class="py-4"
+            color="surface-variant"
+            prepend-icon="mdi-playlist-edit"
+            rounded="lg"
+            title="Preislisten"
+            variant="tonal"
+            @click="$router.push({ name: 'adminPriceLists' })"
+          />
+        </v-col>
       </v-row>
     </div>
   </v-container>
