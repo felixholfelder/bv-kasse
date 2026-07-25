@@ -1,77 +1,82 @@
 <script setup lang="ts">
   import type { PriceList } from '@/types/price_list.ts'
-  import type { ShoppingListEntry } from '@/types/shopping_list_entry.ts'
+  import type { PriceListEntry } from '@/types/price_list_entry.ts'
   import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
-  import ShoppingListEntryDialog from '@/components/dialogs/shopping-list-entry-dialog.vue'
-  import { useFirestore } from '@/composable/useFirestore.ts'
-  import { useShoppingListPdf } from '@/composable/useShoppingListPdf.ts'
+  import PriceListEntryDialog from '@/components/dialogs/price-list-entry-dialog.vue'
+  import { usePriceListPdf } from '@/composable/usePriceListPdf.ts'
+  import { usePriceLists } from '@/composable/usePriceLists.ts'
+  import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   const {
-    getShoppingList,
-    getShoppingListEntries,
-    createShoppingListEntry,
-    updateShoppingListEntry,
-    deleteShoppingListEntry,
-  } = useFirestore()
+    getPriceList,
+    getPriceListEntries,
+    createPriceListEntry,
+    updatePriceListEntry,
+    deletePriceListEntry,
+    disablePriceListEntry,
+    enablePriceListEntry,
+  } = usePriceLists()
 
   const route = useRoute()
 
-  const items = ref<ShoppingListEntry[]>([])
+  const items = ref<PriceListEntry[]>([])
 
   const list = ref<PriceList>()
 
   const isEditDialogOpen = ref(false)
-  const selectedItem = ref<ShoppingListEntry | null>(null)
+  const selectedItem = ref<PriceListEntry | null>(null)
 
-  const { printShoppingList } = useShoppingListPdf()
+  const { printPriceList } = usePriceListPdf()
 
   onMounted(async () => {
     await refreshList()
-    list.value = await getShoppingList(route.params.shoppingListId as string)
+    list.value = await getPriceList(route.params.shoppingListId as string)
   })
 
   async function refreshList () {
-    items.value = await getShoppingListEntries(route.params.shoppingListId as string)
+    items.value = await getPriceListEntries(route.params.priceListId as string)
   }
 
   function handlePrint () {
-    printShoppingList(items.value, list.value?.name)
+    printPriceList(items.value, list.value?.name)
   }
 
-  function openEditDialog (item: ShoppingListEntry | null = null) {
+  function openEditDialog (item: PriceListEntry | null = null) {
     selectedItem.value = item
     isEditDialogOpen.value = true
   }
 
-  async function saveItem (item: ShoppingListEntry) {
+  async function saveItem (item: PriceListEntry) {
     if (item.id === undefined) {
       item.id = uuidv4()
-      item.shoppingListId = route.params.shoppingListId as string
-      await createShoppingListEntry(item)
+      item.priceListId = route.params.priceListId as string
+      item.enabled = true
+      await createPriceListEntry(item)
     } else {
-      await updateShoppingListEntry(item)
+      await updatePriceListEntry(item)
     }
 
     await refreshList()
   }
 
-  async function deleteItem (item: ShoppingListEntry) {
-    await deleteShoppingListEntry(item)
+  async function deleteItem (item: PriceListEntry) {
+    await deletePriceListEntry(item)
+    await refreshList()
+  }
+
+  async function onToggleEvent (toggle: boolean, item: any) {
+    await (toggle ? enablePriceListEntry(item.id) : disablePriceListEntry(item.id))
     await refreshList()
   }
 </script>
 
 <template>
   <div>
-    <shopping-list-entry-dialog
-      v-model="isEditDialogOpen"
-      :item="selectedItem"
-      @submit="saveItem"
-    />
+    <price-list-entry-dialog v-model="isEditDialogOpen" :item="selectedItem" @submit="saveItem" />
 
-    <v-app-bar title="Einkaufsliste">
+    <v-app-bar title="Preisliste">
       <template #prepend>
         <v-btn icon="mdi-arrow-left" @click="$router.back()" />
       </template>
@@ -79,7 +84,7 @@
       <template #append>
         <v-btn icon @click="handlePrint">
           <v-icon>mdi-printer</v-icon>
-          <v-tooltip activator="parent">Einkaufliste drucken</v-tooltip>
+          <v-tooltip activator="parent">Preisliste drucken</v-tooltip>
         </v-btn>
 
         <v-btn icon="mdi-plus" @click="openEditDialog()" />
@@ -89,18 +94,25 @@
     <v-table class="mt-16">
       <thead>
         <tr>
-          <th class="text-left">Name</th>
-          <th class="text-left">Restbestand</th>
-          <th class="text-left">Menge</th>
+          <th class="text-left">Titel</th>
+          <th class="text-left">Preis</th>
+          <th class="text-left">Aktiviert</th>
           <th class="text-left">Löschen</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
-          <td>{{ item.name }}</td>
-          <td>{{ item.stock }}</td>
-          <td>{{ item.amount }}</td>
+          <td>
+            <p>{{ item.title }}</p>
+            <p>{{ item.subtitle }}</p>
+          </td>
+
+          <td>{{ formatPrice(item.price) }}</td>
+
+          <td @click.stop="onToggleEvent(!item.enabled, item)">
+            <v-checkbox :model-value="item.enabled" />
+          </td>
 
           <td>
             <v-icon-btn icon="mdi-delete" @click.stop="deleteItem(item)" />

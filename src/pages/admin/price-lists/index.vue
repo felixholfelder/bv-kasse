@@ -1,11 +1,10 @@
 <script setup lang="ts">
-  import { PriceList } from '@/types/price_list.ts'
   import { v4 as uuidv4 } from 'uuid'
   import { onMounted, ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import ShoppingListDialog from '@/components/dialogs/shopping-list-dialog.vue'
+  import PriceListDialog from '@/components/dialogs/price-list-dialog.vue'
   import { usePriceLists } from '@/composable/usePriceLists.ts'
-  import PriceListDialog from "@/components/dialogs/price-list-dialog.vue";
+  import { PriceList } from '@/types/price_list.ts'
 
   const { getPriceLists, createPriceList, updatePriceList } = usePriceLists()
 
@@ -25,7 +24,7 @@
   }
 
   function openProducts (item: PriceList) {
-    router.push({ name: 'adminShoppingListDetailView', params: { shoppingListId: item.id } })
+    router.push({ name: 'adminPriceListEntries', params: { priceListId: item.id } })
   }
 
   async function saveItem (item: {

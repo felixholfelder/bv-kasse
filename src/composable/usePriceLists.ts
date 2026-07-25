@@ -1,5 +1,14 @@
 import { deleteDoc } from '@firebase/firestore'
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '@/firebase.ts'
 import { PriceList } from '@/types/price_list.ts'
@@ -58,23 +67,37 @@ export function usePriceLists () {
   }
 
   async function getPriceListEntries (priceListId: string) {
-    const q = query(
-      collection(db, price_list_entry),
-      where('priceListId', '==', priceListId),
-    )
+    const q = query(collection(db, price_list_entry), where('priceListId', '==', priceListId))
 
     const snapshot = await getDocs(q)
 
     return snapshot.docs.map(doc => new PriceListEntry(doc.id, doc.data()))
   }
 
+  async function getPriceListEntryById (priceListEntryId: string) {
+    const q = query(collection(db, price_list_entry), where('id', '==', priceListEntryId))
+    const snapshot = await getDocs(q)
+
+    if (snapshot.docs.length > 1) {
+      throw new Error(`More than active event found: ${snapshot.docs.length}!`)
+    }
+
+    if (snapshot.docs.length === 0) {
+      throw new Error(`Kein Preislisteneintrag gefunden: ${priceListEntryId}!`)
+    }
+
+    return new PriceListEntry(snapshot.docs[0].id, snapshot.docs[0].data())
+  }
+
   async function createPriceListEntry (item: PriceListEntry) {
+    console.log(item)
     return await addDoc(collection(db, price_list_entry), {
       id: item.id,
       priceListId: item.priceListId,
       title: item.title,
       subtitle: item.subtitle,
       price: item.price,
+      enabled: item.enabled,
     })
   }
 
@@ -85,11 +108,26 @@ export function usePriceLists () {
       title: item.title,
       subtitle: item.subtitle,
       price: item.price,
+      enabled: item.enabled,
     })
   }
 
   async function deletePriceListEntry (item: PriceListEntry) {
     await deleteDoc(doc(db, price_list_entry, item.documentId))
+  }
+
+  async function disablePriceListEntry (priceListEntryId: string) {
+    const item = await getPriceListEntryById(priceListEntryId)
+    await updateDoc(doc(db, price_list_entry, item.documentId), {
+      enabled: false,
+    })
+  }
+
+  async function enablePriceListEntry (priceListEntryId: string) {
+    const item = await getPriceListEntryById(priceListEntryId)
+    await updateDoc(doc(db, price_list_entry, item.documentId), {
+      enabled: true,
+    })
   }
 
   return {
@@ -101,5 +139,7 @@ export function usePriceLists () {
     createPriceListEntry,
     updatePriceListEntry,
     deletePriceListEntry,
+    enablePriceListEntry,
+    disablePriceListEntry,
   }
 }

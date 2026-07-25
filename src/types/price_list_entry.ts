@@ -7,6 +7,7 @@ export class PriceListEntry {
   title = ''
   subtitle = ''
   price = 0
+  enabled = true
 
   constructor (documentId: any, data: any) {
     this.documentId = documentId
@@ -15,5 +16,6 @@ export class PriceListEntry {
     this.title = data.title
     this.subtitle = data.subtitle
     this.price = data.price
+    this.enabled = data.enabled
   }
 }
