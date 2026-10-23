@@ -24,15 +24,15 @@
     try {
       await login(username.value, password.value)
       router.push({ name: 'admin' })
-    } catch (error_) {
+    } catch (error_: any) {
       error.value = getErrorMessage(error_.code)
     } finally {
       isLoading.value = false
     }
   }
 
-  function getErrorMessage (code) {
-    const messages = {
+  function getErrorMessage (code: string) {
+    const messages: any = {
       'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
       'auth/user-not-found': 'Kein Konto mit dieser E-Mail gefunden.',
       'auth/wrong-password': 'Falsches Passwort.',
