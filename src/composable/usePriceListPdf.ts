@@ -69,14 +69,14 @@ function calculateLayoutSizes (entries: PriceListEntry[], availableHeight: numbe
   }
 
   const titleFontSize = Math.min(MAX_TITLE_FONT, Math.max(MIN_TITLE_FONT, bestTitleFontSize))
-  const subTitleFontSize = Math.min(
+  const subtitleFontSize = Math.min(
     MAX_SUBTITLE_FONT,
     Math.max(MIN_SUBTITLE_FONT, titleFontSize * SUBTITLE_FONT_RATIO),
   )
   const rowHeight = titleFontSize * ROW_HEIGHT_RATIO
   const subtitleRowHeight = titleFontSize * SUBTITLE_ROW_HEIGHT_RATIO
 
-  return { titleFontSize, subTitleFontSize, rowHeight, subtitleRowHeight }
+  return { titleFontSize, subtitleFontSize, rowHeight, subtitleRowHeight }
 }
 
 export function usePriceListPdf () {
@@ -129,7 +129,7 @@ export function usePriceListPdf () {
     const printableEntries = entries.filter(e => e.enabled)
 
     // Schrift- und Zeilengrößen so berechnen, dass alles auf eine Seite passt
-    const { titleFontSize, subTitleFontSize, rowHeight, subtitleRowHeight } = calculateLayoutSizes(
+    const { titleFontSize, subtitleFontSize, rowHeight, subtitleRowHeight } = calculateLayoutSizes(
       printableEntries,
       availableHeight,
     )
@@ -150,7 +150,7 @@ export function usePriceListPdf () {
 
     // Zeilenabstand aus der Schriftgröße ableiten
     const titleLineHeight = titleFontSize * 0.35 * 1.15
-    const subtitleLineHeight = subTitleFontSize * 0.35 * 1.15
+    const subtitleLineHeight = subtitleFontSize * 0.35 * 1.15
     const titleSubtitleGap = titleFontSize * 0.1
 
     autoTable(doc, {
@@ -196,7 +196,7 @@ export function usePriceListPdf () {
             doc.setTextColor(0)
             doc.text(meta.title, textX, startY + titleLineHeight * 0.75)
 
-            doc.setFontSize(subTitleFontSize)
+            doc.setFontSize(subtitleFontSize)
             doc.setTextColor(70)
             doc.text(
               meta.subtitle,

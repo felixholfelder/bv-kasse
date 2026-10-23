@@ -29,6 +29,7 @@ export function useShoppingListPdf () {
     const emptyRow = ['', '', '', '']
     const body = <RowInput[]>[
       ...entries.map(e => ['', e.name, e.amount, e.stock]),
+      // eslint-disable-next-line unicorn/no-array-from-fill,unicorn/no-array-fill-with-reference-type
       ...Array.from({ length: emptyRowsNeeded }).fill(emptyRow),
     ]
 
