@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import type { Product } from '@/types/product.ts'
-  import Sortable from 'sortablejs'
   import { v4 as uuidv4 } from 'uuid'
-  import { nextTick, onMounted, ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import ProductDialog from '@/components/dialogs/product-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
+  import { useSortableList } from '@/composable/useSortableList.ts'
 
   const { getProductsByRegisterId, createProduct, updateProduct } = useFirestore()
 
@@ -16,31 +16,20 @@
 
   const isEditDialogOpen = ref(false)
   const selectedItem = ref<Product | null>(null)
-
   const tbodyRef = ref<HTMLElement | null>(null)
-  let sortableInstance: Sortable | null = null
 
-  onMounted(async () => {
-    await refreshList()
-    await nextTick()
-    initSortable()
+  useSortableList({
+    items,
+    container: tbodyRef,
+    sortKey: 'priority',
+    persist: changed => Promise.all(changed.map(element => updateProduct(element))),
   })
 
-  function initSortable () {
-    if (!tbodyRef.value) return
-
-    sortableInstance?.destroy()
-
-    sortableInstance = Sortable.create(tbodyRef.value, {
-      handle: '.drag-handle',
-      animation: 150,
-      onEnd: onDragEnd,
-    })
-  }
+  onMounted(refreshList)
 
   async function refreshList () {
     const fetched = await getProductsByRegisterId(route.params.registerId as string)
-    items.value = [...fetched].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)) // eslint-disable-line
+  items.value = [...fetched].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)) // eslint-disable-line
   }
 
   function openEditDialog (item: Product | null = null) {
@@ -60,19 +49,6 @@
     }
 
     await refreshList()
-  }
-
-  async function onDragEnd (event: Sortable.SortableEvent) {
-    const { oldIndex, newIndex } = event
-    if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
-
-    const moved = items.value.splice(oldIndex, 1)[0]
-    items.value.splice(newIndex, 0, moved)
-
-    const updates = items.value.map((item, index) => ({ ...item, priority: index + 1 }))
-    items.value = updates
-
-    await Promise.all(updates.map(item => updateProduct(item)))
   }
 </script>
 

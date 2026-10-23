@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import type { PriceList } from '@/types/price_list.ts'
   import type { PriceListEntry } from '@/types/price_list_entry.ts'
-  import Sortable from 'sortablejs'
   import { v4 as uuidv4 } from 'uuid'
-  import { nextTick, onMounted, ref, watch } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import PriceListEntryDialog from '@/components/dialogs/price-list-entry-dialog.vue'
   import { usePriceListPdf } from '@/composable/usePriceListPdf.ts'
   import { usePriceLists } from '@/composable/usePriceLists.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
+  import { useSortableList } from '@/composable/useSortableList.ts'
 
   const {
     getPriceList,
@@ -32,30 +32,22 @@
   const { printPriceList } = usePriceListPdf()
 
   const tbodyRef = ref<HTMLElement | null>(null)
-  let sortableInstance: Sortable | null = null
+
+  useSortableList({
+    items,
+    container: tbodyRef,
+    sortKey: 'sortOrder',
+    persist: changed => Promise.all(changed.map(item => updatePriceListEntry(item))),
+  })
 
   onMounted(async () => {
     await refreshList()
     list.value = await getPriceList(route.params.priceListId as string)
-    await nextTick()
-    initSortable()
   })
-
-  function initSortable () {
-    if (!tbodyRef.value) return
-
-    sortableInstance?.destroy()
-
-    sortableInstance = Sortable.create(tbodyRef.value, {
-      handle: '.drag-handle',
-      animation: 150,
-      onEnd: onDragEnd,
-    })
-  }
 
   async function refreshList () {
     const fetched = await getPriceListEntries(route.params.priceListId as string)
-  items.value = [...fetched].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)) // eslint-disable-line
+    items.value = [...fetched].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)) // eslint-disable-line
   }
 
   function handlePrint () {
@@ -90,22 +82,6 @@
   async function onToggleEvent (toggle: boolean, item: any) {
     await (toggle ? enablePriceListEntry(item.id) : disablePriceListEntry(item.id))
     await refreshList()
-  }
-
-  // SortableJS manipuliert das DOM direkt (ohne Vue), daher lesen wir
-  // nach dem Drop die neue Reihenfolge aus dem DOM aus und synchronisieren
-  // damit den Vue-State + die Backend-Daten.
-  async function onDragEnd (event: Sortable.SortableEvent) {
-    const { oldIndex, newIndex } = event
-    if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
-
-    const moved = items.value.splice(oldIndex, 1)[0]
-    items.value.splice(newIndex, 0, moved)
-
-    const updates = items.value.map((item, index) => ({ ...item, sortOrder: index + 1 }))
-    items.value = updates
-
-    await Promise.all(updates.map(item => updatePriceListEntry(item)))
   }
 </script>
 
