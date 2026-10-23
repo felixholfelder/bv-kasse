@@ -13,16 +13,19 @@
     <v-table class="mt-16">
       <thead>
         <tr>
-          <th class="text-left">Priorität</th>
+          <th style="width: 40px" />
           <th class="text-left">Name</th>
           <th class="text-left">Preis</th>
           <th class="text-left">Aktiviert</th>
         </tr>
       </thead>
 
-      <tbody>
-        <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
-          <td>{{ item.priority }}</td>
+      <tbody ref="tbodyRef">
+        <tr v-for="item in items" :key="item.id" :data-id="item.id" @click="openEditDialog(item)">
+          <td class="drag-handle" style="cursor: grab; width: 40px" @click.stop>
+            <v-icon>mdi-drag</v-icon>
+          </td>
+
           <td>{{ item.name }}</td>
           <td>{{ formatPrice(item.price) }}</td>
 
@@ -37,15 +40,16 @@
 
 <script setup lang="ts">
   import type { EventRegisterProduct } from '@/types/event_register_product.ts'
+  import Sortable from 'sortablejs'
   import { v4 as uuidv4 } from 'uuid'
-  import { onMounted, ref } from 'vue'
+  import { nextTick, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import ProductDialog from '@/components/dialogs/product-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
   import { formatPrice } from '@/composable/usePriceUtils.ts'
 
   const route = useRoute()
-  const items = ref<EventRegisterProduct[]>()
+  const items = ref<EventRegisterProduct[]>([])
 
   const {
     getEventRegisterProductsByEventRegisterId,
@@ -58,36 +62,68 @@
   const selectedItem = ref<EventRegisterProduct | null>(null)
   const isEditDialogOpen = ref(false)
 
+  const tbodyRef = ref<HTMLElement | null>(null)
+  let sortableInstance: Sortable | null = null
+
+  onMounted(async () => {
+    await refreshList()
+    await nextTick()
+    initSortable()
+  })
+
+  function initSortable () {
+    if (!tbodyRef.value) return
+
+    sortableInstance?.destroy()
+
+    sortableInstance = Sortable.create(tbodyRef.value, {
+      handle: '.drag-handle',
+      animation: 150,
+      onEnd: onDragEnd,
+    })
+  }
+
+  async function refreshList () {
+    const fetched = await getEventRegisterProductsByEventRegisterId(
+      route.params.eventRegisterId as string,
+    )
+    items.value = [...fetched].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)) // eslint-disable-line
+  }
+
   function openEditDialog (item: EventRegisterProduct | null = null) {
     selectedItem.value = item
     isEditDialogOpen.value = true
   }
 
-  onMounted(async () => {
-    items.value = await getEventRegisterProductsByEventRegisterId(
-      route.params.eventRegisterId as string,
-    )
-  })
-
   async function onToggleEvent (toggle: boolean, item: any) {
     await (toggle ? enableEventRegisterProduct(item.id) : disableEventRegisterProduct(item.id))
-
-    items.value = await getEventRegisterProductsByEventRegisterId(
-      route.params.eventRegisterId as string,
-    )
+    await refreshList()
   }
 
   async function saveItem (item: EventRegisterProduct) {
     if (item.id === undefined) {
       item.id = uuidv4()
       item.eventRegisterId = route.params.eventRegisterId as string
+      const maxPriority = Math.max(0, ...items.value.map(i => i.priority ?? 0))
+      item.priority = maxPriority + 1
       await createEventRegisterProduct(item)
     } else {
       await updateEventRegisterProduct(item)
     }
 
-    items.value = await getEventRegisterProductsByEventRegisterId(
-      route.params.eventRegisterId as string,
-    )
+    await refreshList()
+  }
+
+  async function onDragEnd (event: Sortable.SortableEvent) {
+    const { oldIndex, newIndex } = event
+    if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
+
+    const moved = items.value.splice(oldIndex, 1)[0]
+    items.value.splice(newIndex, 0, moved)
+
+    const updates = items.value.map((item, index) => ({ ...item, priority: index + 1 }))
+    items.value = updates
+
+    await Promise.all(updates.map(item => updateEventRegisterProduct(item)))
   }
 </script>
