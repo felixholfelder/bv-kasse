@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import type { Product } from '@/types/product.ts'
+  import Sortable from 'sortablejs'
   import { v4 as uuidv4 } from 'uuid'
-  import { onMounted, ref } from 'vue'
+  import { nextTick, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import ProductDialog from '@/components/dialogs/product-dialog.vue'
   import { useFirestore } from '@/composable/useFirestore.ts'
@@ -16,9 +17,31 @@
   const isEditDialogOpen = ref(false)
   const selectedItem = ref<Product | null>(null)
 
+  const tbodyRef = ref<HTMLElement | null>(null)
+  let sortableInstance: Sortable | null = null
+
   onMounted(async () => {
-    items.value = await getProductsByRegisterId(route.params.registerId as string)
+    await refreshList()
+    await nextTick()
+    initSortable()
   })
+
+  function initSortable () {
+    if (!tbodyRef.value) return
+
+    sortableInstance?.destroy()
+
+    sortableInstance = Sortable.create(tbodyRef.value, {
+      handle: '.drag-handle',
+      animation: 150,
+      onEnd: onDragEnd,
+    })
+  }
+
+  async function refreshList () {
+    const fetched = await getProductsByRegisterId(route.params.registerId as string)
+    items.value = [...fetched].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)) // eslint-disable-line
+  }
 
   function openEditDialog (item: Product | null = null) {
     selectedItem.value = item
@@ -29,12 +52,27 @@
     if (item.id === undefined) {
       item.id = uuidv4()
       item.registerId = route.params.registerId as string
+      const maxPriority = Math.max(0, ...items.value.map(i => i.priority ?? 0))
+      item.priority = maxPriority + 1
       await createProduct(item)
     } else {
       await updateProduct(item)
     }
 
-    items.value = await getProductsByRegisterId(route.params.registerId as string)
+    await refreshList()
+  }
+
+  async function onDragEnd (event: Sortable.SortableEvent) {
+    const { oldIndex, newIndex } = event
+    if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
+
+    const moved = items.value.splice(oldIndex, 1)[0]
+    items.value.splice(newIndex, 0, moved)
+
+    const updates = items.value.map((item, index) => ({ ...item, priority: index + 1 }))
+    items.value = updates
+
+    await Promise.all(updates.map(item => updateProduct(item)))
   }
 </script>
 
@@ -55,20 +93,22 @@
     <v-table class="mt-16">
       <thead>
         <tr>
+          <th style="width: 40px" />
           <th />
-          <th class="text-left">Prio</th>
           <th class="text-left">Name</th>
           <th class="text-left">Preis</th>
         </tr>
       </thead>
 
-      <tbody>
-        <tr v-for="item in items" :key="item.id" @click="openEditDialog(item)">
+      <tbody ref="tbodyRef">
+        <tr v-for="item in items" :key="item.id" :data-id="item.id" @click="openEditDialog(item)">
+          <td class="drag-handle" style="cursor: grab; width: 40px" @click.stop>
+            <v-icon>mdi-drag</v-icon>
+          </td>
+
           <td>
             <v-badge :color="item.color" height="30" inline width="30" />
           </td>
-
-          <td>{{ item.priority }}</td>
 
           <td>{{ item.name }}</td>
           <td>{{ formatPrice(item.price) }}</td>
